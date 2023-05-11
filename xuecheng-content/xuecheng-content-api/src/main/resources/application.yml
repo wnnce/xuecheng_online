@@ -1,0 +1,15 @@
+server:
+  port: 8071
+  servlet:
+    context-path: /content
+spring:
+  datasource:
+    url: jdbc:mysql://10.10.10.10:3307/xuecheng-content
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+swagger:
+  title: '学成在线内容管理系统'
+  description: '内容管理系统对学成在线的内容进行管理'
+  base-package: com.zeroxn.xuecheng.content
+  version: 1.0.0
