@@ -10,5 +10,10 @@
     <file url="file://$PROJECT_DIR$/xuecheng-content/xuecheng-content-model/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-content/xuecheng-content-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-generator/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-system/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-system/xuecheng-system-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-system/xuecheng-system-model/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-system/xuecheng-system-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

@@ -15,5 +15,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageResult<T> {
+    /**
+     * 返回的数据
+     */
     private List<T> items;
+    /**
+     * 总记录条数
+     */
+    private Long counts;
+    /**
+     * 当前页码
+     */
+    private Long page;
+    /**
+     * 每页记录数
+     */
+    private Long pageSize;
 }

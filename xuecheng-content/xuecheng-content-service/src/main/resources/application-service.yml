@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:mysql://10.10.10.10:3307/xuecheng_content
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis-plus:
+  type-aliases-package: com.zeroxn.xuecheng.model.pojo
+  mapper-locations: classpath:mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

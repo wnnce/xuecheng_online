@@ -1,5 +1,6 @@
 package com.zeroxn.xuecheng;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,8 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-public class XueChengApplication {
+@MapperScan("com.zeroxn.xuecheng.content.mapper")
+public class ContentApplication {
     public static void main(String[] args) {
-        SpringApplication.run(XueChengApplication.class, args);
+        SpringApplication.run(ContentApplication.class, args);
     }
 }

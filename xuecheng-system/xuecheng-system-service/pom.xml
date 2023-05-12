@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zeroxn.xuecheng</groupId>
-        <artifactId>xuecheng-content</artifactId>
+        <artifactId>xuecheng-system</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>xuecheng-content-service</artifactId>
+    <artifactId>xuecheng-system-service</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.zeroxn.xuecheng</groupId>
-            <artifactId>xuecheng-content-model</artifactId>
+            <artifactId>xuecheng-system-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -35,10 +35,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
         </dependency>
     </dependencies>
 </project>
