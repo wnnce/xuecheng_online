@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zeroxn.xuecheng.content.mapper.CourseCategoryMapper">
     <sql id="BaseColumn">
-
+        id, name, label, parentid, is_show, orderby, is_leaf
     </sql>
+    <select id="queryCourseCategoryTree" resultType="com.zeroxn.xuecheng.content.model.DTO.CourseCategoryTreeDTO">
+        with recursive t1 as (
+            select * from course_category where id = #{id}
+            union all
+            select t2.* from course_category t2 inner join t1 on t2.parentid = t1.id
+        )
+        select * from t1 order by t1.id;
+    </select>
 </mapper>

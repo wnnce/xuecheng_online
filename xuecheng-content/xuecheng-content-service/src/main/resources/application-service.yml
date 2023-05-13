@@ -5,7 +5,7 @@ spring:
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
 mybatis-plus:
-  type-aliases-package: com.zeroxn.xuecheng.model.pojo
+  type-aliases-package: com.zeroxn.xuecheng.content.model.pojo
   mapper-locations: classpath:mappers/*.xml
   configuration:
     map-underscore-to-camel-case: true

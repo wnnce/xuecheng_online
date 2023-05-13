@@ -14,5 +14,10 @@ import java.util.List;
  */
 @Mapper
 public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
+    /**
+     * 通过根节点id以树形结构查询课程分类
+     * @param id 根节点id
+     * @return 课程分类列表
+     */
     List<CourseCategoryTreeDTO> queryCourseCategoryTree(String id);
 }

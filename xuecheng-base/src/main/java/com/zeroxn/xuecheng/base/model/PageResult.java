@@ -1,4 +1,4 @@
-package com.zeroxn.xuecheng.bash.model;
+package com.zeroxn.xuecheng.base.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

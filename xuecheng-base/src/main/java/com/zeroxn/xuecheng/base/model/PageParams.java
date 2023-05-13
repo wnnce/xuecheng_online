@@ -1,4 +1,4 @@
-package com.zeroxn.xuecheng.bash.model;
+package com.zeroxn.xuecheng.base.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;

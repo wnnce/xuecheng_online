@@ -1,7 +1,9 @@
 package com.zeroxn.xuecheng.content.service;
 
-import com.zeroxn.xuecheng.bash.model.PageParams;
-import com.zeroxn.xuecheng.bash.model.PageResult;
+import com.zeroxn.xuecheng.base.model.PageParams;
+import com.zeroxn.xuecheng.base.model.PageResult;
+import com.zeroxn.xuecheng.content.model.DTO.AddCourseDTO;
+import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.QueryCourseParamsDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
 
@@ -12,4 +14,5 @@ import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
  */
 public interface CourseBaseService {
     PageResult<CourseBase> queryCourseBaseListByPage(PageParams params, QueryCourseParamsDTO courseParamsDTO);
+    CourseBaseInfoDTO addCourseBase(Long companyId, AddCourseDTO courseDTO);
 }

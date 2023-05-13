@@ -1,7 +1,9 @@
 package com.zeroxn.xuecheng.content.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zeroxn.xuecheng.content.mapper.CourseCategoryMapper;
 import com.zeroxn.xuecheng.content.model.DTO.CourseCategoryTreeDTO;
+import com.zeroxn.xuecheng.content.model.pojo.CourseCategory;
 import com.zeroxn.xuecheng.content.service.CourseCategoryService;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
  * @Description:
  */
 @Service
-public class CourseCategoryServiceImpl implements CourseCategoryService {
+public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper, CourseCategory> implements CourseCategoryService {
     private final CourseCategoryMapper categoryMapper;
     public CourseCategoryServiceImpl(CourseCategoryMapper categoryMapper){
         this.categoryMapper = categoryMapper;
