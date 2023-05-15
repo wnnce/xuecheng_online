@@ -3,6 +3,7 @@ package com.zeroxn.xuecheng.content.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.model.PageParams;
 import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.base.utils.CommonUtils;
@@ -64,7 +65,7 @@ public class CourseBaseServiceImpl implements CourseBaseService {
     @Override
     public CourseBaseInfoDTO addCourseBase(Long companyId, AddCourseDTO courseDTO) {
         if(CommonUtils.checkObjectFieldIsEmpty(courseDTO, "name", "users", "mt", "st", "grade", "charge")){
-            throw new RuntimeException("添加课程参数错误");
+            throw new CustomException("添加课程参数错误");
         }
         CourseBase courseBase = new CourseBase();
         BeanUtils.copyProperties(courseDTO, courseBase);
@@ -74,7 +75,7 @@ public class CourseBaseServiceImpl implements CourseBaseService {
         courseBase.setStatus("203001");
         int insert = baseMapper.insert(courseBase);
         if (insert < 1){
-            throw new RuntimeException("课程添加失败");
+            throw new CustomException("课程添加失败");
         }
         CourseMarket market = new CourseMarket();
         BeanUtils.copyProperties(courseDTO, market);
@@ -82,7 +83,7 @@ public class CourseBaseServiceImpl implements CourseBaseService {
         market.setId(courseId);
         boolean bl = saveCourseMarket(market);
         if(!bl){
-            throw new RuntimeException("课程营销信息添加失败");
+            throw new CustomException("课程营销信息添加失败");
         }
         return queryCourseBaseInfo(courseId);
     }
@@ -95,11 +96,11 @@ public class CourseBaseServiceImpl implements CourseBaseService {
     private boolean saveCourseMarket(CourseMarket market){
         String charge = market.getCharge();
         if(StringUtils.isEmpty(charge)){
-           throw new RuntimeException("收费规则为空");
+           throw new CustomException("收费规则为空");
         }
         if(charge.equals("201001")){
             if(market.getPrice() == null || market.getPrice() <= 0){
-                throw new RuntimeException("收费课程价格信息错误");
+                throw new CustomException("收费课程价格信息错误");
             }
         }
         CourseMarket findMarket = marketService.getById(market.getId());
