@@ -1,7 +1,9 @@
 package com.zeroxn.xuecheng.content.model.DTO;
 
+import com.zeroxn.xuecheng.base.exception.ValidationGroups;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,33 +12,37 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: lisang
  * @DateTime: 2023/5/12 下午3:53
- * @Description: 添加课程接收数据实体类
+ * @Description: 课程管理接受数据实体类
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddCourseDTO {
-    @NotEmpty(message = "课程名称不能为空")
+public class CourseDTO {
+    @NotNull(message = "课程id不能为空", groups = ValidationGroups.Update.class)
+    @Schema(description = "课程id")
+    private Long id;
+
+    @NotEmpty(message = "课程名称不能为空", groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
     @Schema(description = "课程名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @NotEmpty(message = "适用人群不能为空")
-    @Size(message = "适用人群内容过少",min = 10)
+    @NotEmpty(message = "适用人群不能为空", groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
+    @Size(message = "适用人群内容过少",min = 10, groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
     @Schema(description = "适用人群", requiredMode = Schema.RequiredMode.REQUIRED)
     private String users;
 
     @Schema(description = "课程标签")
     private String tags;
 
-    @NotEmpty(message = "课程分类不能为空")
+    @NotEmpty(message = "课程分类不能为空", groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
     @Schema(description = "大分类", requiredMode = Schema.RequiredMode.REQUIRED)
     private String mt;
 
-    @NotEmpty(message = "课程分类不能为空")
+    @NotEmpty(message = "课程分类不能为空", groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
     @Schema(description = "小分类", requiredMode = Schema.RequiredMode.REQUIRED)
     private String st;
 
-    @NotEmpty(message = "课程等级不能为空")
+    @NotEmpty(message = "课程等级不能为空", groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
     @Schema(description = "课程等级", requiredMode = Schema.RequiredMode.REQUIRED)
     private String grade;
 
@@ -49,7 +55,7 @@ public class AddCourseDTO {
     @Schema(description = "课程图片", requiredMode = Schema.RequiredMode.REQUIRED)
     private String pic;
 
-    @NotEmpty(message = "收费规则不能为空")
+    @NotEmpty(message = "收费规则不能为空", groups = {ValidationGroups.Insert.class, ValidationGroups.Update.class})
     @Schema(description = "收费规则，对应数据字典", requiredMode = Schema.RequiredMode.REQUIRED)
     private String charge;
 

@@ -8,7 +8,7 @@ import com.zeroxn.xuecheng.base.model.PageParams;
 import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.base.utils.CommonUtils;
 import com.zeroxn.xuecheng.content.mapper.CourseBaseMapper;
-import com.zeroxn.xuecheng.content.model.DTO.AddCourseDTO;
+import com.zeroxn.xuecheng.content.model.DTO.CourseDTO;
 import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.QueryCourseParamsDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
@@ -63,7 +63,7 @@ public class CourseBaseServiceImpl implements CourseBaseService {
      */
     @Transactional
     @Override
-    public CourseBaseInfoDTO addCourseBase(Long companyId, AddCourseDTO courseDTO) {
+    public CourseBaseInfoDTO addCourseBase(Long companyId, CourseDTO courseDTO) {
         if(CommonUtils.checkObjectFieldIsEmpty(courseDTO, "name", "users", "mt", "st", "grade", "charge")){
             throw new CustomException("添加课程参数错误");
         }
@@ -85,7 +85,7 @@ public class CourseBaseServiceImpl implements CourseBaseService {
         if(!bl){
             throw new CustomException("课程营销信息添加失败");
         }
-        return queryCourseBaseInfo(courseId);
+        return queryCourseBaseInfoById(courseId);
     }
 
     /**
@@ -117,7 +117,8 @@ public class CourseBaseServiceImpl implements CourseBaseService {
      * @param courseId 课程id
      * @return 课程详细信息
      */
-    public CourseBaseInfoDTO queryCourseBaseInfo(Long courseId){
+    @Override
+    public CourseBaseInfoDTO queryCourseBaseInfoById(Long courseId){
         // 查询课程
         CourseBase findCourseBase = baseMapper.selectById(courseId);
         if(findCourseBase == null){
@@ -134,5 +135,29 @@ public class CourseBaseServiceImpl implements CourseBaseService {
         courseBaseInfoDTO.setMtName(mtName);
         courseBaseInfoDTO.setStName(stName);
         return courseBaseInfoDTO;
+    }
+    @Transactional
+    @Override
+    public CourseBaseInfoDTO updateCourseBase(Long companyId, CourseDTO courseDTO) {
+        CourseBase courseBase = baseMapper.selectById(courseDTO.getId());
+        if (courseBase == null){
+            throw new CustomException("查询参数为空");
+        }
+        if(!companyId.equals(courseBase.getCompanyId())){
+            throw new CustomException("机构ID错误");
+        }
+        BeanUtils.copyProperties(courseDTO, courseBase);
+        courseBase.setChangeDate(LocalDateTime.now());
+        // 更新课程信息
+        baseMapper.updateById(courseBase);
+        CourseMarket courseMarket = new CourseMarket();
+        // 更新课程营销信息
+        BeanUtils.copyProperties(courseDTO, courseMarket);
+        courseMarket.setId(courseBase.getId());
+        boolean bl = saveCourseMarket(courseMarket);
+        if(!bl){
+            throw new CustomException("课程营销信息更新失败");
+        }
+        return queryCourseBaseInfoById(courseBase.getId());
     }
 }

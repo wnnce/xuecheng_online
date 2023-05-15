@@ -1,4 +1,4 @@
-package com.zeroxn.xuecheng.base.model;
+package com.zeroxn.xuecheng.base.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
