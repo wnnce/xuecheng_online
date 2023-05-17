@@ -3,6 +3,9 @@ package com.zeroxn.xuecheng.content.model.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
  * @since 2023-05-10
  */
 @TableName("course_teacher")
+@Schema(description = "课程教师数据实体类")
 public class CourseTeacher implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,31 +33,40 @@ public class CourseTeacher implements Serializable {
     /**
      * 课程标识
      */
+    @NotNull(message = "课程id能为空")
+    @Schema(description = "课程id")
     private Long courseId;
 
     /**
      * 教师标识
      */
+    @NotEmpty(message = "教师姓名不能为空")
+    @Schema(description = "教师姓名")
     private String teacherName;
 
     /**
      * 教师职位
      */
+    @NotEmpty(message = "教师职位不能为空")
+    @Schema(description = "教师职位")
     private String position;
 
     /**
      * 教师简介
      */
+    @Schema(description = "教师简介")
     private String introduction;
 
     /**
      * 照片
      */
+    @Schema(description = "教师照片地址")
     private String photograph;
 
     /**
      * 创建时间
      */
+    @Schema(description = "创建时间，后端生成")
     private LocalDateTime createDate;
 
     public Long getId() {

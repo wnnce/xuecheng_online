@@ -39,7 +39,7 @@ public class TeachPlanServiceImpl implements TeachPlanService {
             Teachplan teachplan = new Teachplan();
             BeanUtils.copyProperties(teachPlanDTO, teachplan);
             teachplan.setCreateDate(LocalDateTime.now());
-            int count = getTeachPlanCountByParentIdAndCourseId(teachPlanDTO.getParentid(), teachPlanDTO.getCourseId());
+            int count = queryTeachPlanCountByParentIdAndCourseId(teachPlanDTO.getParentid(), teachPlanDTO.getCourseId());
             teachplan.setOrderby(count + 1);
             teachPlanMapper.insert(teachplan);
         }else {
@@ -82,7 +82,7 @@ public class TeachPlanServiceImpl implements TeachPlanService {
             teachPlanMapper.updateTeachPlanOnUp(teachPlanId, teachplan.getParentid(), teachplan.getCourseId(),
                     teachplan.getOrderby());
         }else {
-            int count = getTeachPlanCountByParentIdAndCourseId(teachplan.getParentid(), teachplan.getCourseId());
+            int count = queryTeachPlanCountByParentIdAndCourseId(teachplan.getParentid(), teachplan.getCourseId());
             if(teachplan.getOrderby() >= count){
                 throw new CustomException("该课程计划无法下移");
             }
@@ -103,7 +103,7 @@ public class TeachPlanServiceImpl implements TeachPlanService {
         }
     }
 
-    private int getTeachPlanCountByParentIdAndCourseId(Long parentId, Long courseId){
+    private int queryTeachPlanCountByParentIdAndCourseId(Long parentId, Long courseId){
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Teachplan::getParentid, parentId)
                 .eq(Teachplan::getCourseId, courseId);
