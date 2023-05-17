@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://10.10.10.10:3307/xuecheng_content
+    url: jdbc:mysql://10.10.10.10:3307/xuecheng_content?allowMultiQueries=true
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zeroxn.xuecheng.content.mapper.TeachPlanMapper">
 
-    <resultMap id="TeachPlanTreeMap" type="com.zeroxn.xuecheng.content.model.DTO.CourseTeachPlanTreeDTO">
+    <resultMap id="TeachPlanTreeMap" type="com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO">
         <id column="one_id" property="id" />
         <result column="one_pname" property="pname" />
         <result column="one_parentid" property="parentid" />
@@ -13,7 +13,8 @@
         <result column="one_orderby" property="orderby" />
         <result column="one_courseId" property="courseId" />
         <result column="one_coursePubId" property="coursePubId" />
-        <collection property="teachPlanTreeNodes" ofType="com.zeroxn.xuecheng.content.model.DTO.CourseTeachPlanTreeDTO">
+        <result column="one_isPreview" property="isPreview" />
+        <collection property="teachPlanTreeNodes" ofType="com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO">
             <id column="two_id" property="id" />
             <result column="two_pname" property="pname" />
             <result column="two_parentid" property="parentid" />
@@ -24,6 +25,7 @@
             <result column="two_orderby" property="orderby" />
             <result column="two_courseId" property="courseId" />
             <result column="two_coursePubId" property="coursePubId" />
+            <result column="two_isPreview" property="isPreview" />
             <association property="teachplanMedia" javaType="com.zeroxn.xuecheng.content.model.pojo.TeachplanMedia">
                 <id column="teachPlanMediaId" property="id" />
                 <result column="mediaFileName" property="mediaFilename" />
@@ -37,13 +39,41 @@
 
     <select id="getTeachPlanTree" resultMap="TeachPlanTreeMap">
         select t1.id one_id, t1.pname one_pname, t1.parentid one_parentid, t1.grade one_grade, t1.media_type one_mediaType,
-               t1.start_time one_startTime, t1.end_time one_endTime, t1.orderby one_orderby, t1.course_id one_courseId, t1.course_pub_id one_coursePubId,
+               t1.start_time one_startTime, t1.end_time one_endTime, t1.orderby one_orderby, t1.course_id one_courseId,
+               t1.course_pub_id one_coursePubId, t1.is_preview one_isPreview,
                t2.id two_id, t2.pname two_pname, t2.parentid two_parentid, t2.grade two_grade, t2.media_type two_mediaType,
-               t2.start_time two_startTime, t2.end_time two_endTime, t2.orderby two_orderby, t2.course_id two_courseId, t2.course_pub_id two_coursePubId,
+               t2.start_time two_startTime, t2.end_time two_endTime, t2.orderby two_orderby, t2.course_id two_courseId,
+               t2.course_pub_id two_coursePubId, t2.is_preview two_isPreview,
                tm.media_fileName mediaFileName, tm.id teachPlanMediaId, media_id mediaId
         from teachplan t1
-                 inner join teachplan t2 on t1.id = t2.parentid
+                 left join teachplan t2 on t2.parentid = t1.id
                  left join teachplan_media tm on tm.teachplan_id = t2.id
-        where t1.course_id = #{courseId} order by t1.orderby and t2.orderby;
+        where t1.course_id = 117 and t1.parentid = 0 order by t1.orderby, t2.orderby;
     </select>
+
+    <update id="deleteTeachPlanById">
+        update teachplan set status = 0 where id = #{teachPlanId};
+    </update>
+
+    <delete id="deleteTeachPlanByIds">
+        delete from teachplan where id in
+        <foreach collection="teachPlanIds" open="(" close=");" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getTeachPlanIdsByParentId" resultType="long">
+        select id from teachplan where parentid = #{parentId};
+    </select>
+
+    <update id="updateTeachPlanOnUp">
+        update teachplan set orderby = orderby + 1 where parentid = #{parentId} and course_id = #{courseId} and orderby = #{orderBy} - 1;
+        update teachplan set orderby = orderby - 1 where id = #{teachPlanId};
+    </update>
+
+    <update id="updateTeachPlanOnDown">
+        update teachplan set orderby = orderby - 1 where parentid = #{parentId} and course_id = #{courseId} and orderby = #{orderBy} + 1;
+        update teachplan set orderby = orderby + 1 where id = #{teachPlanId};
+    </update>
+
 </mapper>

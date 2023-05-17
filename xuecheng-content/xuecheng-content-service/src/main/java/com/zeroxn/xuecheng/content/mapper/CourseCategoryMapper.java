@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zeroxn.xuecheng.content.model.DTO.CourseCategoryTreeDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseCategory;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,5 +20,5 @@ public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
      * @param id 根节点id
      * @return 课程分类列表
      */
-    List<CourseCategoryTreeDTO> queryCourseCategoryTree(String id);
+    List<CourseCategoryTreeDTO> queryCourseCategoryTree(@Param("id") String id);
 }

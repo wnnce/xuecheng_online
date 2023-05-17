@@ -7,7 +7,7 @@ package com.zeroxn.xuecheng.base.enums;
  */
 public enum CommonError {
     BASE_ERROR("系统错误，请重试"),
-    PARAM_ERROR("查询参数错误"),
+    PARAM_ERROR("参数错误"),
     OBJECT_NULL("对象为空"),
     QUERY_NULL("查询为空");
     private final String message;

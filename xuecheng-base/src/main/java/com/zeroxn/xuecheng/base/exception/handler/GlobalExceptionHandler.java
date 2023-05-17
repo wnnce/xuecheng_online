@@ -3,6 +3,7 @@ package com.zeroxn.xuecheng.base.exception.handler;
 import com.zeroxn.xuecheng.base.enums.CommonError;
 import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.exception.ErrorResponse;
+import com.zeroxn.xuecheng.base.exception.ParamException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.ObjectError;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,6 +32,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handlerCustomException(CustomException ex){
         log.error("抛出自定义异常，{}", ex.getMessage());
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    /**
+     * 捕获自自定义的查询参数异常 用来提示前端提交的参数有误
+     * @param ex 参数异常
+     * @return 返回错误消息
+     */
+    @ExceptionHandler(ParamException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerParamException(ParamException ex){
+        log.error("抛出参数异常，{}", ex.getMessage());
         return new ErrorResponse(ex.getMessage());
     }
 
@@ -55,9 +69,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         List<ObjectError> allErrors = ex.getAllErrors();
-        allErrors.forEach(error -> {
-            System.out.println(error.getDefaultMessage());
-        });
-        return new ErrorResponse("请求参数错误，请重试");
+        String[] messages = allErrors.stream().map(ObjectError::getDefaultMessage).toArray(String[]::new);
+        String errorMessage = String.join(",", messages);
+        return new ErrorResponse(errorMessage);
     }
 }

@@ -2,6 +2,7 @@ package com.zeroxn.xuecheng.content.model.DTO;
 
 import com.zeroxn.xuecheng.content.model.pojo.Teachplan;
 import com.zeroxn.xuecheng.content.model.pojo.TeachplanMedia;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CourseTeachPlanTreeDTO extends Teachplan {
+public class TeachPlanTreeDTO extends Teachplan {
     /**
      * 课程对应的媒体资源信息
      */
@@ -26,5 +27,5 @@ public class CourseTeachPlanTreeDTO extends Teachplan {
     /**
      * 课程计划的子章节 树形节点
      */
-    private List<CourseTeachPlanTreeDTO> teachPlanTreeNodes;
+    private List<TeachPlanTreeDTO> teachPlanTreeNodes;
 }
