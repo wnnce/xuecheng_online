@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: content-api
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: 10.10.10.10:8848
+      discovery:
+        namespace: dev
+        group: xuecheng-online
+      config:
+        namespace: dev
+        group: xuecheng-online
+        refresh-enabled: true
+        file-extension: yaml
+        extension-configs:
+          - data-id: content-service-${spring.profiles.active}.yaml
+            group: xuecheng-online
+            refresh: true
+        shared-configs:
+          - data-id: common-${spring.profiles.active}.yaml
+            group: xuecheng-online-common
+            refresh: true

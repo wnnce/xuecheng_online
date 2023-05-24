@@ -1,4 +1,4 @@
-GET http://localhost:8040/system/dictionary/all
+GET http://localhost:8010/system/dictionary/all
 ###
 GET http://localhost:8040/system/dictionary/200
 ###

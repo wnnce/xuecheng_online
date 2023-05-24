@@ -1,2 +1,2 @@
 ###
-GET http://localhost:8071/content/course-category/tree-nodes
+GET http://localhost:8010/content/course-category/tree-nodes
