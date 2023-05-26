@@ -3,6 +3,8 @@ package com.zeroxn.xuecheng.media.web;
 import com.zeroxn.xuecheng.base.model.PageParams;
 import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.media.model.DTO.QueryMediaParamsDTO;
+import com.zeroxn.xuecheng.media.model.DTO.UploadFileArgsDTO;
+import com.zeroxn.xuecheng.media.model.DTO.UploadFileResultDTO;
 import com.zeroxn.xuecheng.media.model.pojo.MediaFiles;
 import com.zeroxn.xuecheng.media.service.MediaFilesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +12,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -30,5 +37,19 @@ public class MediaFilesController {
     public PageResult<MediaFiles> listMediaFiles(PageParams pageParams, @RequestBody QueryMediaParamsDTO paramsDTO){
         Long companyId = 1232141425L;
         return mediaFilesService.listMediaFiles(companyId, pageParams, paramsDTO);
+    }
+    @PostMapping("/upload/coursefile")
+    @Operation(summary = "上传文件（视频、文档）接口")
+    public UploadFileResultDTO uploadFile(@RequestPart("filedata")MultipartFile file) throws IOException {
+        String filename = file.getOriginalFilename();
+        File tempFile = File.createTempFile("upload", ".temp");
+        Long companyId = 1232141425L;
+        long size = file.getSize();
+        file.transferTo(tempFile);
+        UploadFileArgsDTO argsDTO = new UploadFileArgsDTO();
+        argsDTO.setFilename(filename);
+        argsDTO.setFileSize(size);
+        argsDTO.setFileType("001001");
+        return mediaFilesService.uploadFile(companyId, argsDTO, tempFile.getAbsolutePath());
     }
 }
