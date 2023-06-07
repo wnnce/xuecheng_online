@@ -3,6 +3,8 @@ package com.zeroxn.xuecheng.media.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zeroxn.xuecheng.media.model.pojo.MediaProcess;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -12,5 +14,6 @@ import com.zeroxn.xuecheng.media.model.pojo.MediaProcess;
  * @since 2023-05-24
  */
 public interface MediaProcessService extends IService<MediaProcess> {
-
+    List<MediaProcess> queryShardProcess(int shard, int total);
+    boolean startTask(Long id);
 }

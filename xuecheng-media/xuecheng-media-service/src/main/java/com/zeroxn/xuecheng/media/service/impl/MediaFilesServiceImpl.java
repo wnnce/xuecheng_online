@@ -9,11 +9,13 @@ import com.zeroxn.xuecheng.base.model.PageParams;
 import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.media.config.MinioConfig;
 import com.zeroxn.xuecheng.media.mapper.MediaFilesMapper;
+import com.zeroxn.xuecheng.media.mapper.MediaProcessMapper;
 import com.zeroxn.xuecheng.media.model.DTO.QueryMediaParamsDTO;
 import com.zeroxn.xuecheng.media.model.DTO.RestResponse;
 import com.zeroxn.xuecheng.media.model.DTO.UploadFileArgsDTO;
 import com.zeroxn.xuecheng.media.model.DTO.UploadFileResultDTO;
 import com.zeroxn.xuecheng.media.model.pojo.MediaFiles;
+import com.zeroxn.xuecheng.media.model.pojo.MediaProcess;
 import com.zeroxn.xuecheng.media.service.MediaFilesService;
 import com.zeroxn.xuecheng.media.utils.MinioUtils;
 import io.minio.ComposeSource;
@@ -44,12 +46,15 @@ import java.util.stream.Stream;
 @Slf4j
 public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFiles> implements MediaFilesService{
     private final MediaFilesMapper mediaFilesMapper;
+    private final MediaProcessMapper mediaProcessMapper;
     private final MinioConfig minioConfig;
     private final MinioUtils minioUtils;
-    public MediaFilesServiceImpl(MediaFilesMapper mediaFilesMapper, MinioConfig minioConfig, MinioUtils minioUtils){
+    public MediaFilesServiceImpl(MediaFilesMapper mediaFilesMapper, MinioConfig minioConfig, MinioUtils minioUtils,
+                                 MediaProcessMapper mediaProcessMapper){
         this.mediaFilesMapper = mediaFilesMapper;
         this.minioConfig = minioConfig;
         this.minioUtils = minioUtils;
+        this.mediaProcessMapper = mediaProcessMapper;
     }
 
     @Override
@@ -176,11 +181,23 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         argsDTO.setFilename(fileName);
         argsDTO.setFileType("001002");
         // 记录保存到数据库
-        saveMediaFiles(companyId, argsDTO, minioConfig.getVideoBucket(), fileMd5, target);
+        UploadFileResultDTO resultDTO = saveMediaFiles(companyId, argsDTO, minioConfig.getVideoBucket(), fileMd5, target);
         // 删除分块文件
         boolean deleteResult = clearChunkFile(chunkFilePath, chunkTotal);
         if(!deleteResult){
             return RestResponse.fail("删除分块文件失败", false);
+        }
+        // 将文件保存到待处理任务库
+        MediaProcess mediaProcess = new MediaProcess();
+        mediaProcess.setFileId(resultDTO.getFileId());
+        mediaProcess.setBucket(resultDTO.getBucket());
+        mediaProcess.setFilePath(resultDTO.getFilePath());
+        mediaProcess.setFilename(resultDTO.getFilename());
+        mediaProcess.setStatus("1");
+        mediaProcess.setCreateDate(LocalDateTime.now());
+        int insert = mediaProcessMapper.insert(mediaProcess);
+        if(insert <= 0){
+            log.error("保存到待处理任务库失败，文件ID：{}", mediaProcess.getFileId());
         }
         return RestResponse.success(true);
     }

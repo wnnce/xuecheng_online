@@ -1,5 +1,6 @@
 package com.zeroxn.xuecheng.media.service.jobhandler;
 
+import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ public class DemoXxlJob {
     private static final Logger logger = LoggerFactory.getLogger(DemoXxlJob.class);
     @XxlJob("testXxlJob")
     public void testXxlJobHandler(){
-        DemoXxlJob.logger.info("任务被执行了...");
+        int shardIndex = XxlJobHelper.getShardIndex();
+        int shardTotal = XxlJobHelper.getShardTotal();
+        DemoXxlJob.logger.info("分片：{}，总数：{}", shardIndex, shardTotal);
     }
 }
