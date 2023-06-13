@@ -59,6 +59,10 @@ public class MediaProcessHistory implements Serializable {
      * 文件路径
      */
     private String filePath;
+    /**
+     * 文件处理失败重试次数
+     */
+    private Integer failCount;
 
     /**
      * 失败原因
@@ -137,6 +141,14 @@ public class MediaProcessHistory implements Serializable {
         this.filePath = filePath;
     }
 
+    public Integer getFailCount() {
+        return failCount;
+    }
+
+    public void setFailCount(Integer failCount) {
+        this.failCount = failCount;
+    }
+
     public String getErrormsg() {
         return errormsg;
     }
@@ -148,16 +160,17 @@ public class MediaProcessHistory implements Serializable {
     @Override
     public String toString() {
         return "MediaProcessHistory{" +
-            "id = " + id +
-            ", fileId = " + fileId +
-            ", filename = " + filename +
-            ", bucket = " + bucket +
-            ", status = " + status +
-            ", createDate = " + createDate +
-            ", finishDate = " + finishDate +
-            ", url = " + url +
-            ", filePath = " + filePath +
-            ", errormsg = " + errormsg +
-        "}";
+                "id=" + id +
+                ", fileId='" + fileId + '\'' +
+                ", filename='" + filename + '\'' +
+                ", bucket='" + bucket + '\'' +
+                ", status='" + status + '\'' +
+                ", createDate=" + createDate +
+                ", finishDate=" + finishDate +
+                ", url='" + url + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", failCount=" + failCount +
+                ", errormsg='" + errormsg + '\'' +
+                '}';
     }
 }

@@ -4,9 +4,13 @@ import io.minio.*;
 import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -34,12 +38,18 @@ public class MinioUtils {
         }
         return false;
     }
-    public InputStream cloneFile(String bucket, String filePath){
+    public File cloneFile(String bucket, String filePath){
         try{
-            return minioClient.getObject(GetObjectArgs.builder()
+            InputStream inputStream  = minioClient.getObject(GetObjectArgs.builder()
                     .bucket(bucket)
                     .object(filePath)
                     .build());
+            File tempFile = File.createTempFile("minioDw", ".temp");
+            OutputStream outputStream = new FileOutputStream(tempFile);
+            IOUtils.copy(inputStream, outputStream);
+            inputStream.close();
+            outputStream.close();
+            return tempFile;
         }catch (Exception ex){
             log.error("minio获取文件出错，错误消息：{}", ex.getMessage());
         }
@@ -64,5 +74,11 @@ public class MinioUtils {
             log.error("minio删除多个文件出错，错误消息：{}", ex.getMessage());
         }
         return false;
+    }
+    public String getMinioFileChunkPath(String fileMd5){
+        return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/" + "chunk" + "/";
+    }
+    public String getMinioFilePath(String fileMd5){
+        return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/";
     }
 }

@@ -2,6 +2,7 @@ package com.zeroxn.xuecheng.media.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zeroxn.xuecheng.media.model.pojo.MediaProcessHistory;
+import org.springframework.stereotype.Service;
 
 /**
  * @Author: lisang

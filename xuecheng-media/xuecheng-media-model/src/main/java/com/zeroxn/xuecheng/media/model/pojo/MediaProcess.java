@@ -62,6 +62,10 @@ public class MediaProcess implements Serializable {
      * 媒资文件访问地址
      */
     private String url;
+    /**
+     * 处理失败重试次数
+     */
+    private Integer failCount;
 
     /**
      * 失败原因
@@ -140,6 +144,14 @@ public class MediaProcess implements Serializable {
         this.url = url;
     }
 
+    public Integer getFailCount() {
+        return failCount;
+    }
+
+    public void setFailCount(Integer failCount) {
+        this.failCount = failCount;
+    }
+
     public String getErrormsg() {
         return errormsg;
     }
@@ -151,16 +163,17 @@ public class MediaProcess implements Serializable {
     @Override
     public String toString() {
         return "MediaProcess{" +
-            "id = " + id +
-            ", fileId = " + fileId +
-            ", filename = " + filename +
-            ", bucket = " + bucket +
-            ", filePath = " + filePath +
-            ", status = " + status +
-            ", createDate = " + createDate +
-            ", finishDate = " + finishDate +
-            ", url = " + url +
-            ", errormsg = " + errormsg +
-        "}";
+                "id=" + id +
+                ", fileId='" + fileId + '\'' +
+                ", filename='" + filename + '\'' +
+                ", bucket='" + bucket + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", status='" + status + '\'' +
+                ", createDate=" + createDate +
+                ", finishDate=" + finishDate +
+                ", url='" + url + '\'' +
+                ", failCount=" + failCount +
+                ", errormsg='" + errormsg + '\'' +
+                '}';
     }
 }
