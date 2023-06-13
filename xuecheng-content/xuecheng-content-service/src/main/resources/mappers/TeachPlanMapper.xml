@@ -48,7 +48,7 @@
         from teachplan t1
                  left join teachplan t2 on t2.parentid = t1.id
                  left join teachplan_media tm on tm.teachplan_id = t2.id
-        where t1.course_id = 117 and t1.parentid = 0 order by t1.orderby, t2.orderby;
+        where t1.course_id = #{courseId} and t1.parentid = 0 order by t1.orderby, t2.orderby;
     </select>
 
     <update id="deleteTeachPlanById">

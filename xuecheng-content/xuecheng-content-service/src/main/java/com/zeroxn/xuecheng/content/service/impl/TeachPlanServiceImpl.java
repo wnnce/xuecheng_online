@@ -5,9 +5,12 @@ import com.zeroxn.xuecheng.base.enums.CommonError;
 import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.exception.ParamException;
 import com.zeroxn.xuecheng.content.mapper.TeachPlanMapper;
+import com.zeroxn.xuecheng.content.model.DTO.BindThachPlanMediaDTO;
 import com.zeroxn.xuecheng.content.model.DTO.SaveTeachPlanDTO;
 import com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO;
 import com.zeroxn.xuecheng.content.model.pojo.Teachplan;
+import com.zeroxn.xuecheng.content.model.pojo.TeachplanMedia;
+import com.zeroxn.xuecheng.content.service.TeachPlanMediaService;
 import com.zeroxn.xuecheng.content.service.TeachPlanService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -24,8 +27,10 @@ import java.util.List;
 @Service
 public class TeachPlanServiceImpl implements TeachPlanService {
     private final TeachPlanMapper teachPlanMapper;
-    public TeachPlanServiceImpl(TeachPlanMapper teachPlanMapper){
+    private final TeachPlanMediaService teachPlanMediaService;
+    public TeachPlanServiceImpl(TeachPlanMapper teachPlanMapper, TeachPlanMediaService teachPlanMediaService){
         this.teachPlanMapper = teachPlanMapper;
+        this.teachPlanMediaService = teachPlanMediaService;
     }
     @Override
     public List<TeachPlanTreeDTO> queryTeachPlanTree(Long courseId) {
@@ -89,6 +94,24 @@ public class TeachPlanServiceImpl implements TeachPlanService {
             teachPlanMapper.updateTeachPlanOnDown(teachPlanId, teachplan.getParentid(), teachplan.getCourseId(),
                     teachplan.getOrderby());
         }
+    }
+    @Override
+    public void bindTeachPlanMedia(BindThachPlanMediaDTO bindThachPlanMediaDTO) {
+        Long teachplanId = bindThachPlanMediaDTO.getTeachplanId();
+        Teachplan teachplan = teachPlanMapper.selectById(teachplanId);
+        if(teachplan == null){
+            throw new ParamException("该课程计划不存在");
+        }
+        if(teachplan.getGrade() != 2){
+            throw new ParamException("该课程计划无法添加视频");
+        }
+        TeachplanMedia teachplanMedia = new TeachplanMedia();
+        teachplanMedia.setMediaId(bindThachPlanMediaDTO.getMediaId());
+        teachplanMedia.setMediaFilename(bindThachPlanMediaDTO.getFileName());
+        teachplanMedia.setTeachplanId(bindThachPlanMediaDTO.getTeachplanId());
+        teachplanMedia.setCourseId(teachplan.getCourseId());
+        teachplanMedia.setCreateDate(LocalDateTime.now());
+        teachPlanMediaService.save(teachplanMedia);
     }
 
     /**

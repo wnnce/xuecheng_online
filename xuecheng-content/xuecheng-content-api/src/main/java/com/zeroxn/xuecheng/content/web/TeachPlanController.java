@@ -1,5 +1,6 @@
 package com.zeroxn.xuecheng.content.web;
 
+import com.zeroxn.xuecheng.content.model.DTO.BindThachPlanMediaDTO;
 import com.zeroxn.xuecheng.content.model.DTO.SaveTeachPlanDTO;
 import com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO;
 import com.zeroxn.xuecheng.content.service.TeachPlanService;
@@ -58,5 +59,10 @@ public class TeachPlanController {
     @Parameter(name = "id", description = "课程计划id", required = true)
     public void moveTeachPlanDown(@PathVariable("id") Long teachPlanId){
         teachPlanService.updateTeachPlanLocation(teachPlanId, false);
+    }
+    @PostMapping("association/media")
+    @Operation(summary = "绑定课程计划和视频文件")
+    public void bindThachPlanMedia(@RequestBody @Validated BindThachPlanMediaDTO bindThachPlanMediaDTO){
+        teachPlanService.bindTeachPlanMedia(bindThachPlanMediaDTO);
     }
 }

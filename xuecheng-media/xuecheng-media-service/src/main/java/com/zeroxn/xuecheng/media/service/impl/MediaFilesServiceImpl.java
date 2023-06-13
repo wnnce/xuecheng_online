@@ -61,6 +61,12 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                 .eq(StringUtils.isNotEmpty(paramsDTO.getFileName()), MediaFiles::getAuditStatus, paramsDTO.getAuditStatus())
                 .eq(StringUtils.isNotEmpty(paramsDTO.getFileType()), MediaFiles::getFileType, paramsDTO.getFileType())
                 .like(StringUtils.isNotEmpty(paramsDTO.getFileName()), MediaFiles::getFilename, paramsDTO.getFileName());
+        if(pageParams.getPageNo() == null){
+            pageParams.setPageNo(1L);
+        }
+        if(pageParams.getPageSize() == null){
+            pageParams.setPageSize(5L);
+        }
         Page<MediaFiles> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
         Page<MediaFiles> pageResult = this.page(page, queryWrapper);
         return new PageResult<>(pageResult.getRecords(), pageResult.getTotal(), pageResult.getCurrent(),

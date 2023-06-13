@@ -1,5 +1,6 @@
 package com.zeroxn.xuecheng.content.service;
 
+import com.zeroxn.xuecheng.content.model.DTO.BindThachPlanMediaDTO;
 import com.zeroxn.xuecheng.content.model.DTO.SaveTeachPlanDTO;
 import com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO;
 
@@ -35,4 +36,5 @@ public interface TeachPlanService {
      * @param teachPlanId 课程计划id
      */
     void updateTeachPlanLocation(Long teachPlanId, boolean upOrDown);
+    void bindTeachPlanMedia(BindThachPlanMediaDTO bindThachPlanMediaDTO);
 }
