@@ -17,14 +17,16 @@ import java.util.concurrent.*;
 /**
  * @Author: lisang
  * @DateTime: 2023/6/13 下午3:34
- * @Description:
+ * @Description: 视频处理任务执行器
  */
 @Component
 @Slf4j
 public class VideoTask {
     private final MediaProcessService mediaProcessService;
     private final MinioUtils minioUtils;
-
+    /**
+     * ffmpeg文件路径 通过nacos下发配置
+     */
     @Value("${video-process.ffmpeg-path}")
     public String ffmpegPath;
 
@@ -34,18 +36,23 @@ public class VideoTask {
     }
     @XxlJob("videoHandler")
     public void videoToMp4Task() throws InterruptedException {
+        // 获取执行器总数 分片和处理器核心数量
         int total = XxlJobHelper.getShardTotal();
         int index = XxlJobHelper.getShardIndex();
         int processors = Runtime.getRuntime().availableProcessors();
         List<MediaProcess> mediaProcessList = mediaProcessService.queryShardProcess(index, total, processors);
         int size = mediaProcessList.size();
+        // 判断待处理任务列表是不是为空
         if(size == 0){
             log.info("待处理的视频任务为空");
             return;
         }
+        // 开启一个线程池
         ExecutorService executorService = Executors.newFixedThreadPool(size);
+        // 计时器 用于阻塞线程 否则任务管理中心会一直下发任务
         CountDownLatch countDownLatch = new CountDownLatch(size);
         mediaProcessList.forEach(mediaProcess -> {
+            // 调用线程池中的线程执行
             executorService.execute(() -> {
                 try{
                     Long taskId = mediaProcess.getId();

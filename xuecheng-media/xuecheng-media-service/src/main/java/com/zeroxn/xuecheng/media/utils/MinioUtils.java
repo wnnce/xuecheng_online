@@ -25,6 +25,14 @@ public class MinioUtils {
     public MinioUtils(MinioClient minioClient){
         this.minioClient = minioClient;
     }
+
+    /**
+     * 上传文件到Minio
+     * @param bucket 存储桶
+     * @param fileName 文件在本地的路径
+     * @param object 文件在Minio的路径
+     * @return 返回true/false
+     */
     public boolean uploadFile(String bucket, String fileName, String object) {
         try {
             minioClient.uploadObject(UploadObjectArgs.builder()
@@ -38,6 +46,13 @@ public class MinioUtils {
         }
         return false;
     }
+
+    /**
+     * 下载Minio的文件到本地临时文件
+     * @param bucket 存储桶
+     * @param filePath 文件在minio的路径
+     * @return 临时文件
+     */
     public File cloneFile(String bucket, String filePath){
         try{
             InputStream inputStream  = minioClient.getObject(GetObjectArgs.builder()
@@ -55,6 +70,14 @@ public class MinioUtils {
         }
         return null;
     }
+
+    /**
+     * 合并Minio中的文件
+     * @param bucket 存储桶
+     * @param sourceList 需要合并的分片文件
+     * @param object 文件合并后的路径
+     * @return 返回true/false
+     */
     public boolean mergeFile(String bucket, List<ComposeSource> sourceList, String object){
         try {
             minioClient.composeObject(ComposeObjectArgs.builder().bucket(bucket).object(object).sources(sourceList).build());
@@ -64,6 +87,13 @@ public class MinioUtils {
         }
         return false;
     }
+
+    /**
+     * 删除Minio中的多个文件
+     * @param bucket 存储桶
+     * @param chunkFilePathList 需要删除的文件路径列表
+     * @return 返回true/false
+     */
     public boolean deleteFiles(String bucket, List<String> chunkFilePathList){
         try{
             for (String path : chunkFilePathList) {
