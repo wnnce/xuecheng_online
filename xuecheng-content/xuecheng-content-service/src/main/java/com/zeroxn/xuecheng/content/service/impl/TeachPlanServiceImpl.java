@@ -105,6 +105,11 @@ public class TeachPlanServiceImpl implements TeachPlanService {
         if(teachplan.getGrade() != 2){
             throw new ParamException("该课程计划无法添加视频");
         }
+        // 先删除之前的文件绑定
+        LambdaQueryWrapper<TeachplanMedia> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TeachplanMedia::getTeachplanId, teachplanId);
+        teachPlanMediaService.remove(queryWrapper);
+        // 再插入新的视频文件绑定
         TeachplanMedia teachplanMedia = new TeachplanMedia();
         teachplanMedia.setMediaId(bindThachPlanMediaDTO.getMediaId());
         teachplanMedia.setMediaFilename(bindThachPlanMediaDTO.getFileName());
