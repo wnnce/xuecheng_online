@@ -74,4 +74,6 @@ public interface MediaFilesService extends IService<MediaFiles> {
      * @throws IOException
      */
     RestResponse<Boolean> chunkMerge(Long companyId, String fileMd5, int chunkTotal, String fileName) throws IOException;
+
+    RestResponse<String> getVideoUrlById(String mediaId);
 }

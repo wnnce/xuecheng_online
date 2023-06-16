@@ -200,6 +200,19 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return RestResponse.success(true);
     }
 
+    @Override
+    public RestResponse<String> getVideoUrlById(String mediaId) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(mediaId);
+        if(mediaFiles == null){
+            return RestResponse.fail("媒体文件不存在", null);
+        }
+        String url = mediaFiles.getUrl();
+        if(StringUtils.isEmpty(url)){
+            return RestResponse.fail("媒体文件处理中", null);
+        }
+        return RestResponse.success(url);
+    }
+
     private boolean clearChunkFile(String chunkFilePath, int chunkTotal){
         List<String> chunkFilePathList = Stream.iterate(0, i -> ++i).limit(chunkTotal)
                 .map(i -> chunkFilePath + i).toList();

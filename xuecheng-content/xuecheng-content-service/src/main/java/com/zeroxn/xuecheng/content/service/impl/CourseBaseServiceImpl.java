@@ -124,11 +124,13 @@ public class CourseBaseServiceImpl implements CourseBaseService {
         if(findCourseBase == null){
             return null;
         }
-        // 查询课程营销信息
-        CourseMarket findCourseMarket = marketService.getById(courseId);
         CourseBaseInfoDTO courseBaseInfoDTO = new CourseBaseInfoDTO();
         BeanUtils.copyProperties(findCourseBase, courseBaseInfoDTO);
-        BeanUtils.copyProperties(findCourseMarket, courseBaseInfoDTO);
+        // 查询课程营销信息
+        CourseMarket findCourseMarket = marketService.getById(courseId);
+        if(findCourseMarket != null){
+            BeanUtils.copyProperties(findCourseMarket, courseBaseInfoDTO);
+        }
         // 查询分类名称
         String mtName = categoryService.getById(findCourseBase.getMt()).getName();
         String stName = categoryService.getById(findCourseBase.getSt()).getName();
