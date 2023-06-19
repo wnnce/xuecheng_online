@@ -58,9 +58,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     public PageResult<MediaFiles> listMediaFiles(Long companyId, PageParams pageParams, QueryMediaParamsDTO paramsDTO) {
         LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(MediaFiles::getCompanyId, companyId)
-                .eq(StringUtils.isNotEmpty(paramsDTO.getFileName()), MediaFiles::getAuditStatus, paramsDTO.getAuditStatus())
+                .eq(StringUtils.isNotEmpty(paramsDTO.getAuditStatus()), MediaFiles::getAuditStatus, paramsDTO.getAuditStatus())
                 .eq(StringUtils.isNotEmpty(paramsDTO.getFileType()), MediaFiles::getFileType, paramsDTO.getFileType())
-                .like(StringUtils.isNotEmpty(paramsDTO.getFileName()), MediaFiles::getFilename, paramsDTO.getFileName());
+                .like(StringUtils.isNotEmpty(paramsDTO.getFilename()), MediaFiles::getFilename, paramsDTO.getFilename());
         if(pageParams.getPageNo() == null){
             pageParams.setPageNo(1L);
         }

@@ -95,7 +95,7 @@ public class VideoTask {
                         log.error("Minio上传转换后的文件失败，BUCKET：{}，文件ID：{}", bucket, fileId);
                         mediaProcessService.saveMediaProcessTask(taskId, fileId, null, "3", "Minio上传转换后的文件失败");
                     }
-                    String url = bucket + objectName;
+                    String url = "/" + bucket + "/" + objectName;
                     mediaProcessService.saveMediaProcessTask(taskId, fileId, url, "2", null);
                 }finally {
                     countDownLatch.countDown();

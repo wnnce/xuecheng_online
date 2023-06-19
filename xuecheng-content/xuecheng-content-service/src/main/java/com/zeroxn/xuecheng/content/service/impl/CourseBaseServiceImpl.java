@@ -3,6 +3,7 @@ package com.zeroxn.xuecheng.content.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.model.PageParams;
 import com.zeroxn.xuecheng.base.model.PageResult;
@@ -12,15 +13,18 @@ import com.zeroxn.xuecheng.content.model.DTO.CourseDTO;
 import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.QueryCourseParamsDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
+import com.zeroxn.xuecheng.content.model.pojo.CourseCategory;
 import com.zeroxn.xuecheng.content.model.pojo.CourseMarket;
 import com.zeroxn.xuecheng.content.service.CourseBaseService;
 import com.zeroxn.xuecheng.content.service.CourseCategoryService;
 import com.zeroxn.xuecheng.content.service.CourseMarketService;
+import com.zeroxn.xuecheng.content.service.async.CourseAsyncTask;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @Author: lisang
@@ -28,7 +32,7 @@ import java.time.LocalDateTime;
  * @Description:
  */
 @Service
-public class CourseBaseServiceImpl implements CourseBaseService {
+public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseBase> implements CourseBaseService {
     private final CourseBaseMapper baseMapper;
     private final CourseMarketService marketService;
     private final CourseCategoryService categoryService;

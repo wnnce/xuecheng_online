@@ -28,5 +28,5 @@ public class QueryMediaParamsDTO {
      * 文件名称
      */
     @Schema(description = "文件名称")
-    private String fileName;
+    private String filename;
 }

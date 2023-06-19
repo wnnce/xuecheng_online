@@ -2,10 +2,10 @@ package com.zeroxn.xuecheng.content.service.async;
 
 import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO;
+import com.zeroxn.xuecheng.content.model.pojo.CourseCategory;
+import com.zeroxn.xuecheng.content.model.pojo.CourseMarket;
 import com.zeroxn.xuecheng.content.model.pojo.CourseTeacher;
-import com.zeroxn.xuecheng.content.service.CourseBaseService;
-import com.zeroxn.xuecheng.content.service.CourseTeacherService;
-import com.zeroxn.xuecheng.content.service.TeachPlanService;
+import com.zeroxn.xuecheng.content.service.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +19,21 @@ import java.util.concurrent.CompletableFuture;
  * @Description:
  */
 @Component
-public class CoursePreviewAsyncTask {
+@Async
+public class CourseAsyncTask {
     private final CourseBaseService courseBaseService;
     private final TeachPlanService teachPlanService;
     private final CourseTeacherService teacherService;
-    public CoursePreviewAsyncTask(CourseBaseService courseBaseService, TeachPlanService teachPlanService, CourseTeacherService teacherService){
+    private final CourseCategoryService categoryService;
+    private final CourseMarketService marketService;
+    public CourseAsyncTask(CourseBaseService courseBaseService, TeachPlanService teachPlanService,
+                           CourseTeacherService teacherService, CourseCategoryService categoryService,
+                           CourseMarketService marketService){
         this.courseBaseService = courseBaseService;
         this.teachPlanService = teachPlanService;
         this.teacherService = teacherService;
+        this.categoryService = categoryService;
+        this.marketService = marketService;
     }
 
     /**
@@ -34,7 +41,6 @@ public class CoursePreviewAsyncTask {
      * @param courseId 课程ID
      * @return 返回课程详细信息或空
      */
-    @Async
     public CompletableFuture<CourseBaseInfoDTO> queryCourseInfoByCourseId(Long courseId){
         CourseBaseInfoDTO courseBase = courseBaseService.queryCourseBaseInfoById(courseId);
         return CompletableFuture.completedFuture(courseBase != null ? courseBase : new CourseBaseInfoDTO());
@@ -45,7 +51,6 @@ public class CoursePreviewAsyncTask {
      * @param courseId 课程ID
      * @return 返回课程目录的树形信息或空
      */
-    @Async
     public CompletableFuture<List<TeachPlanTreeDTO>> listTeachPlanTreeByCourseId(Long courseId){
         List<TeachPlanTreeDTO> teachPlanList = teachPlanService.queryTeachPlanTree(courseId);
         return CompletableFuture.completedFuture(teachPlanList != null ? teachPlanList : new ArrayList<>());
@@ -56,10 +61,14 @@ public class CoursePreviewAsyncTask {
      * @param courseId 课程ID
      * @return 返回课程的教师列表或空
      */
-    @Async
     public CompletableFuture<List<CourseTeacher>> listCourseTeacherByCourseId(Long courseId){
         List<CourseTeacher> teacherList = teacherService.listCourseTeacherByCourseId(courseId);
         return CompletableFuture.completedFuture(teacherList != null ? teacherList : new ArrayList<>());
     }
-
+    public CompletableFuture<CourseCategory> queryCourseCategoryById(String id){
+        return CompletableFuture.completedFuture(categoryService.getById(id));
+    }
+    public CompletableFuture<CourseMarket> queryCourseMarketByCourseId(Long courseId){
+        return CompletableFuture.completedFuture(marketService.getById(courseId));
+    }
 }

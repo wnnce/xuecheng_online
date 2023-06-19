@@ -4,11 +4,8 @@ import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.CoursePreviewDTO;
 import com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseTeacher;
-import com.zeroxn.xuecheng.content.service.CourseBaseService;
 import com.zeroxn.xuecheng.content.service.CoursePreviewService;
-import com.zeroxn.xuecheng.content.service.CourseTeacherService;
-import com.zeroxn.xuecheng.content.service.TeachPlanService;
-import com.zeroxn.xuecheng.content.service.async.CoursePreviewAsyncTask;
+import com.zeroxn.xuecheng.content.service.async.CourseAsyncTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,8 +21,8 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class CoursePreviewServiceImpl implements CoursePreviewService {
     private static final Logger logger = LoggerFactory.getLogger(CoursePreviewServiceImpl.class);
-    private final CoursePreviewAsyncTask coursePreviewAsyncTask;
-    public CoursePreviewServiceImpl(CoursePreviewAsyncTask coursePreviewAsyncTask){
+    private final CourseAsyncTask coursePreviewAsyncTask;
+    public CoursePreviewServiceImpl(CourseAsyncTask coursePreviewAsyncTask){
         this.coursePreviewAsyncTask = coursePreviewAsyncTask;
     }
     @Override

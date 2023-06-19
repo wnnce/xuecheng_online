@@ -103,7 +103,7 @@
                                 <div class="title"><span>课程制作</span></div>
                                 <#list course.teacherList as teacher>
                                     <div class="cont">
-                                        <div class="img-box"><img src="${teacher.photograph}" alt=""></div>
+                                        <div class="img-box"><img src="http://file.xuecheng.ml${teacher.photograph}" width="100%" height="100%" alt=""></div>
                                         <div class="info-box">
                                             <p class="name">教学方：<em>${teacher.teacherName!''}</em></p>
                                             <p class="lab">${teacher.position!''}</p>
