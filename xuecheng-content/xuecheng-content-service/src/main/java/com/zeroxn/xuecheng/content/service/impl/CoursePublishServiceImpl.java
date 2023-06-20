@@ -1,17 +1,17 @@
 package com.zeroxn.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeroxn.xuecheng.base.exception.CustomException;
+import com.zeroxn.xuecheng.base.utils.CommonUtils;
 import com.zeroxn.xuecheng.content.mapper.CoursePublishMapper;
+import com.zeroxn.xuecheng.content.mapper.CoursePublishPreMapper;
 import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.TeachPlanTreeDTO;
-import com.zeroxn.xuecheng.content.model.pojo.CourseCategory;
-import com.zeroxn.xuecheng.content.model.pojo.CourseMarket;
-import com.zeroxn.xuecheng.content.model.pojo.CoursePublish;
-import com.zeroxn.xuecheng.content.model.pojo.CourseTeacher;
+import com.zeroxn.xuecheng.content.model.pojo.*;
 import com.zeroxn.xuecheng.content.service.CourseBaseService;
 import com.zeroxn.xuecheng.content.service.CoursePublishService;
 import com.zeroxn.xuecheng.content.service.TeachPlanService;
@@ -35,15 +35,17 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     private final CourseBaseService courseBaseService;
     private final TeachPlanService teachPlanService;
     private final CoursePublishMapper coursePublishMapper;
+    private final CoursePublishPreMapper coursePublishPreMapper;
     private final ObjectMapper objectMapper;
     public CoursePublishServiceImpl(CourseAsyncTask courseAsyncTask, CourseBaseService courseBaseService,
                                     TeachPlanService teachPlanService, CoursePublishMapper coursePublishMapper,
-                                    ObjectMapper objectMapper){
+                                    ObjectMapper objectMapper, CoursePublishPreMapper coursePublishPreMapper){
         this.courseAsyncTask = courseAsyncTask;
         this.courseBaseService = courseBaseService;
         this.teachPlanService = teachPlanService;
         this.coursePublishMapper = coursePublishMapper;
         this.objectMapper = objectMapper;
+        this.coursePublishPreMapper = coursePublishPreMapper;
     }
     @Override
     @Transactional
@@ -65,31 +67,55 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         if(treeDTOList == null || treeDTOList.size() == 0){
             throw new CustomException("请添加课程计划");
         }
-        CoursePublish coursePublish = new CoursePublish();
-        BeanUtils.copyProperties(courseBase, coursePublish);
-        coursePublish.setStatus("202003");
-        coursePublish.setCompanyId(companyId);
-        coursePublish.setCreateDate(LocalDateTime.now());
+        CoursePublishPre coursePublishPre = new CoursePublishPre();
+        BeanUtils.copyProperties(courseBase, coursePublishPre);
+        coursePublishPre.setStatus("202003");
+        coursePublishPre.setCompanyId(companyId);
+        coursePublishPre.setCreateDate(LocalDateTime.now());
         CompletableFuture<List<CourseTeacher>> teacherList = courseAsyncTask.listCourseTeacherByCourseId(courseId);
         CompletableFuture<CourseMarket> courseMarket = courseAsyncTask.queryCourseMarketByCourseId(courseId);
         CompletableFuture<CourseCategory> mt = courseAsyncTask.queryCourseCategoryById(courseBase.getMt());
         CompletableFuture<CourseCategory> st = courseAsyncTask.queryCourseCategoryById(courseBase.getSt());
         CompletableFuture.allOf(teacherList, courseMarket, mt, st).join();
         String courseMarketJson = objectMapper.writeValueAsString(courseMarket.join());
-        coursePublish.setMarket(courseMarketJson);
+        coursePublishPre.setMarket(courseMarketJson);
         String teacherListJson = objectMapper.writeValueAsString(teacherList.join());
-        coursePublish.setTeachers(teacherListJson);
+        coursePublishPre.setTeachers(teacherListJson);
         String treeDTOListJson = objectMapper.writeValueAsString(treeDTOList);
-        coursePublish.setTeachplan(treeDTOListJson);
-        coursePublish.setMtName(mt.join().getName());
-        coursePublish.setStName(st.join().getName());
+        coursePublishPre.setTeachplan(treeDTOListJson);
+        coursePublishPre.setMtName(mt.join().getName());
+        coursePublishPre.setStName(st.join().getName());
+        Long count = coursePublishPreMapper.selectCount(new LambdaQueryWrapper<CoursePublishPre>().eq(CoursePublishPre::getId, courseId));
+        if(count > 0){
+            coursePublishPreMapper.updateById(coursePublishPre);
+        }else {
+            coursePublishPreMapper.insert(coursePublishPre);
+        }
+        courseBase.setAuditStatus("202003");
+        courseBaseService.updateById(courseBase);
+    }
+    @Transactional
+    @Override
+    public void coursePublish(Long companyId, Long courseId) {
+        CoursePublishPre coursePublishPre = coursePublishPreMapper.selectById(courseId);
+        if (coursePublishPre == null){
+            throw new CustomException("要发布的课程不存在");
+        }
+        if (!"202004".equals(coursePublishPre.getStatus())){
+            throw new CustomException("要发布的课程未通过审核");
+        }
+        CoursePublish coursePublish = new CoursePublish();
+        BeanUtils.copyProperties(coursePublishPre, coursePublish);
         Long count = coursePublishMapper.selectCount(new LambdaQueryWrapper<CoursePublish>().eq(CoursePublish::getId, courseId));
         if(count > 0){
             coursePublishMapper.updateById(coursePublish);
         }else {
             coursePublishMapper.insert(coursePublish);
         }
-        courseBase.setAuditStatus("202003");
-        courseBaseService.updateById(courseBase);
+        coursePublishPreMapper.deleteById(courseId);
+        boolean result = courseBaseService.update(new LambdaUpdateWrapper<CourseBase>().set(CourseBase::getStatus, "203002").eq(CourseBase::getId, courseId));
+        if(!result){
+            throw new CustomException("课程发布失败，请重试");
+        }
     }
 }

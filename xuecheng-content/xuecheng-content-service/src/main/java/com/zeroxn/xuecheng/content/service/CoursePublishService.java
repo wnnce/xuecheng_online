@@ -9,4 +9,5 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  */
 public interface CoursePublishService {
     void commitAudit(Long companyId, Long courseId) throws JsonProcessingException;
+    void coursePublish(Long companyId, Long courseId);
 }
