@@ -81,7 +81,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
      * @return
      */
     @Override
-    public UploadFileResultDTO uploadFile(Long companyId, UploadFileArgsDTO argsDTO, String tempFilePath) {
+    public UploadFileResultDTO uploadFile(Long companyId, UploadFileArgsDTO argsDTO, String tempFilePath, String objectName) {
         String fileMd5 = getFileMd5(tempFilePath);
         MediaFiles mediaFiles = mediaFilesMapper.selectById(fileMd5);
         if(mediaFiles != null){
@@ -91,12 +91,14 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         }
         String fileName = argsDTO.getFilename();
         String suffix = fileName.substring(fileName.lastIndexOf("."));
-        String fileObject = getFileObject(fileMd5, suffix);
-        boolean result = minioUtils.uploadFile(minioConfig.getFileBucket(), tempFilePath, fileObject);
+        if(objectName == null || objectName.length() == 0){
+            objectName = getFileObject(fileMd5, suffix);
+        }
+        boolean result = minioUtils.uploadFile(minioConfig.getFileBucket(), tempFilePath, objectName);
         if(!result){
             throw new CustomException("文件上传失败");
         }
-        UploadFileResultDTO resultDTO = saveMediaFiles(companyId, argsDTO, minioConfig.getFileBucket(), fileMd5, fileObject);
+        UploadFileResultDTO resultDTO = saveMediaFiles(companyId, argsDTO, minioConfig.getFileBucket(), fileMd5, objectName);
         if(resultDTO == null){
             throw new CustomException("文件保存失败");
         }

@@ -36,7 +36,7 @@ public interface MediaFilesService extends IService<MediaFiles> {
      * @param tempFilePath 文件的临时路径
      * @return 上传成功则返回链接 失败则返回错误信息
      */
-    UploadFileResultDTO uploadFile(Long companyId, UploadFileArgsDTO argsDTO, String tempFilePath);
+    UploadFileResultDTO uploadFile(Long companyId, UploadFileArgsDTO argsDTO, String tempFilePath, String objectName);
 
     /**
      * 通过文件的MD5码检查文件是否已经存在

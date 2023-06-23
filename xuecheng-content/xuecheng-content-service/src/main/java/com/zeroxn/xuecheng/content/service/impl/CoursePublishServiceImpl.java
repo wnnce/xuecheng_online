@@ -16,7 +16,10 @@ import com.zeroxn.xuecheng.content.service.CourseBaseService;
 import com.zeroxn.xuecheng.content.service.CoursePublishService;
 import com.zeroxn.xuecheng.content.service.TeachPlanService;
 import com.zeroxn.xuecheng.content.service.async.CourseAsyncTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,21 +34,25 @@ import java.util.concurrent.CompletableFuture;
  */
 @Service
 public class CoursePublishServiceImpl implements CoursePublishService {
+    private static final Logger logger = LoggerFactory.getLogger(CoursePublishServiceImpl.class);
     private final CourseAsyncTask courseAsyncTask;
     private final CourseBaseService courseBaseService;
     private final TeachPlanService teachPlanService;
     private final CoursePublishMapper coursePublishMapper;
     private final CoursePublishPreMapper coursePublishPreMapper;
     private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, Long> kafkaTemplate;
     public CoursePublishServiceImpl(CourseAsyncTask courseAsyncTask, CourseBaseService courseBaseService,
                                     TeachPlanService teachPlanService, CoursePublishMapper coursePublishMapper,
-                                    ObjectMapper objectMapper, CoursePublishPreMapper coursePublishPreMapper){
+                                    ObjectMapper objectMapper, CoursePublishPreMapper coursePublishPreMapper,
+                                    KafkaTemplate<String, Long> kafkaTemplate){
         this.courseAsyncTask = courseAsyncTask;
         this.courseBaseService = courseBaseService;
         this.teachPlanService = teachPlanService;
         this.coursePublishMapper = coursePublishMapper;
         this.objectMapper = objectMapper;
         this.coursePublishPreMapper = coursePublishPreMapper;
+        this.kafkaTemplate = kafkaTemplate;
     }
     @Override
     @Transactional
@@ -117,5 +124,11 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         if(!result){
             throw new CustomException("课程发布失败，请重试");
         }
+        kafkaTemplate.send("xuecheng", courseId).thenAccept(success -> {
+            logger.info("Kafka发送消息成功，课程ID：{}", courseId);
+        }).exceptionally(error -> {
+            logger.error("Kafka发送消息失败，课程ID：{}", courseId);
+            throw new CustomException("课程发布失败，请重试");
+        });
     }
 }

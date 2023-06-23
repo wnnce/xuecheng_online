@@ -65,9 +65,21 @@ public class CourseAsyncTask {
         List<CourseTeacher> teacherList = teacherService.listCourseTeacherByCourseId(courseId);
         return CompletableFuture.completedFuture(teacherList != null ? teacherList : new ArrayList<>());
     }
+
+    /**
+     * 异步线程通过分类ID获取课程的分类信息
+     * @param id 分类ID
+     * @return 返回分类信息或空
+     */
     public CompletableFuture<CourseCategory> queryCourseCategoryById(String id){
         return CompletableFuture.completedFuture(categoryService.getById(id));
     }
+
+    /**
+     * 异步线程通过课程ID获取课程的营销信息
+     * @param courseId 课程ID
+     * @return 返回课程营销信息或空
+     */
     public CompletableFuture<CourseMarket> queryCourseMarketByCourseId(Long courseId){
         return CompletableFuture.completedFuture(marketService.getById(courseId));
     }

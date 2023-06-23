@@ -37,7 +37,8 @@ public class MediaFilesController {
     }
     @PostMapping("/upload/coursefile")
     @Operation(summary = "上传文件（视频、文档）接口")
-    public UploadFileResultDTO uploadFile(@RequestPart("filedata")MultipartFile file) throws IOException {
+    public UploadFileResultDTO uploadFile(@RequestPart("filedata")MultipartFile file,
+                                          @RequestParam(value = "objectName", required = false) String objectName) throws IOException {
         String filename = file.getOriginalFilename();
         File tempFile = File.createTempFile("upload", ".temp");
         Long companyId = 1232141425L;
@@ -47,6 +48,6 @@ public class MediaFilesController {
         argsDTO.setFilename(filename);
         argsDTO.setFileSize(size);
         argsDTO.setFileType("001001");
-        return mediaFilesService.uploadFile(companyId, argsDTO, tempFile.getAbsolutePath());
+        return mediaFilesService.uploadFile(companyId, argsDTO, tempFile.getAbsolutePath(), objectName);
     }
 }
