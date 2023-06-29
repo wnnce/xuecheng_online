@@ -42,6 +42,11 @@ public class CourseKafkaHandler {
         String classpath = this.getClass().getResource("/").getPath();
         configuration.setDirectoryForTemplateLoading(new File(classpath + "/templates"));
     }
+
+    /**
+     * kafka消费者 监听课程发布topic 启动必须要groupID
+     * @param courseId 课程ID
+     */
     @KafkaListener(topics = "xuecheng")
     public void handlerKafkaListener(Long courseId){
         logger.info("监听到Kafka消息，课程ID：{}", courseId);
@@ -78,7 +83,7 @@ public class CourseKafkaHandler {
         Writer writer = null;
         try{
             Template template = configuration.getTemplate("course_template.ftl");
-            File htmlFile = File.createTempFile(String.valueOf(courseId), ".html");
+            File htmlFile = new File("/home/lisang/Documents/html/" + courseId + ".html");
             writer = new FileWriter(htmlFile.getAbsolutePath());
             template.process(new HashMap<String, Object>(Map.of("course", coursePreview)), writer);
             writer.write(writer.toString());
