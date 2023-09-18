@@ -1,6 +1,7 @@
 package com.zeroxn.xuecheng.content.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author: lisang
@@ -10,4 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public interface CoursePublishService {
     void commitAudit(Long companyId, Long courseId) throws JsonProcessingException;
     void coursePublish(Long companyId, Long courseId);
+    MultipartFile generateHtml(Long courseId);
+    boolean uploadHtmlToMinio(Long courseId, MultipartFile htmlFile);
 }
