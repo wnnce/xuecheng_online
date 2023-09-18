@@ -25,3 +25,8 @@ spring:
           - data-id: freemarker-${spring.profiles.active}.yaml
             group: xuecheng-online-common
             refresh: true
+          - data-id: feign-${spring.profiles.active}.yaml
+            group: xuecheng-online-common
+            refresh: true
+
+
