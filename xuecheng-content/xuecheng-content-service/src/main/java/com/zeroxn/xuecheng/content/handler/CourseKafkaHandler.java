@@ -9,6 +9,8 @@ import com.zeroxn.xuecheng.content.model.DTO.CoursePreviewDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
 import com.zeroxn.xuecheng.content.service.CourseBaseService;
 import com.zeroxn.xuecheng.content.service.CoursePreviewService;
+import com.zeroxn.xuecheng.content.service.CoursePublishService;
+import com.zeroxn.xuecheng.content.service.CoursePublishTaskService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -21,6 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Author: lisang
@@ -31,16 +37,14 @@ import java.util.Map;
 public class CourseKafkaHandler {
     private static final Logger logger = LoggerFactory.getLogger(CourseKafkaHandler.class);
     private final CourseBaseService baseService;
-    private final CoursePreviewService previewService;
-    private final Configuration configuration;
-    private final MediaClient mediaClient;
-    public CourseKafkaHandler(CourseBaseService baseService, CoursePreviewService previewService, MediaClient mediaClient) throws IOException {
+    private final CoursePublishService publishService;
+    private final CoursePublishTaskService publishTaskService;
+    private final ExecutorService taskService = Executors.newFixedThreadPool(3);
+    public CourseKafkaHandler(CourseBaseService baseService, CoursePublishService publishService,
+                              CoursePublishTaskService publishTaskService) {
         this.baseService = baseService;
-        this.previewService = previewService;
-        this.mediaClient = mediaClient;
-        configuration = new Configuration(Configuration.VERSION_2_3_31);
-        String classpath = this.getClass().getResource("/").getPath();
-        configuration.setDirectoryForTemplateLoading(new File(classpath + "/templates"));
+        this.publishService = publishService;
+        this.publishTaskService = publishTaskService;
     }
 
     /**
@@ -55,56 +59,46 @@ public class CourseKafkaHandler {
             logger.info("该课程ID对应的课程不存在，结束运行");
             return;
         }
-        boolean result1 = saveCourseIndex(courseId);
-        boolean result2 = saveCourseCache(courseId);
-        boolean result3 = generateHtml(courseId);
-
-        if(result1 || result2 || result3){
+        // 使用异步任务同时完成三个线程
+        publishTaskService.addPublishTask(courseId);
+        CompletableFuture<Boolean> task1 = saveCourseIndex(courseId);
+        CompletableFuture<Boolean> task2 = saveCourseCache(courseId);
+        CompletableFuture<Boolean> task3 = generateHtml(courseId);
+        // 等待所有线程执行完毕
+        CompletableFuture.allOf(task1, task2, task3);
+        if(task1.join() && task2.join() && task3.join()){
             // TODO: 所有操作都成功后执行的后置操作
-
+            publishTaskService.deletePublishTask(courseId);
         }
 
 
     }
 
-    private boolean saveCourseIndex(Long courseId){
+    private CompletableFuture<Boolean> saveCourseIndex(Long courseId){
         // TODO:将课程索引保存到Elasticsearch 返回保存结果 如果保存失败则往 xxx表中添加数据
-
-        return true;
+        return CompletableFuture.supplyAsync(() -> {
+            publishTaskService.updateTask1Status(courseId, 1);
+            return true;
+        }, taskService);
     }
-    private boolean saveCourseCache(Long courseId){
+    private CompletableFuture<Boolean> saveCourseCache(Long courseId){
         // TODO:将课程信息缓存到Redis 返回保存结果
-
-        return true;
+        return CompletableFuture.supplyAsync(() -> {
+            publishTaskService.updateTask2Status(courseId, 1);
+            return true;
+        }, taskService);
     }
-    private boolean generateHtml(Long courseId) {
-        // TODO: 课程信息生成静态页面 保存到Minio
-        CoursePreviewDTO coursePreview = previewService.queryCoursePreview(courseId);
-        Writer writer = null;
-        try{
-            Template template = configuration.getTemplate("course_template.ftl");
-            File htmlFile = new File("/home/lisang/Documents/html/" + courseId + ".html");
-            writer = new FileWriter(htmlFile.getAbsolutePath());
-            template.process(new HashMap<String, Object>(Map.of("course", coursePreview)), writer);
-            writer.write(writer.toString());
-            MultipartFile multipartFile = new FileToMultipartFile(htmlFile);
-            String objectName = "course/" + courseId + ".html";
-            String result = mediaClient.uploadFile(multipartFile, objectName);
-            if (!StringUtils.isEmpty(result)){
-                logger.info("静态网页上传成功！，响应参数：{}", result);
-                return true;
+    private CompletableFuture<Boolean> generateHtml(Long courseId) {
+        return CompletableFuture.supplyAsync(() -> {
+            MultipartFile multipartFile = publishService.generateHtml(courseId);
+            if (multipartFile == null){
+                return false;
             }
-        }catch (IOException | TemplateException e){
-            logger.error("生成HTML报错，错误消息：{}", e.getMessage());
-        }finally {
-            try{
-                if(writer != null){
-                    writer.close();
-                }
-            }catch (IOException ex){
-                logger.warn("流关闭失败！");
+            boolean result = publishService.uploadHtmlToMinio(courseId, multipartFile);
+            if (result) {
+                publishTaskService.updateTask3Status(courseId, 1);
             }
-        }
-        return false;
+            return result;
+        }, taskService);
     }
 }
