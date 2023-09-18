@@ -91,7 +91,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         }
         String fileName = argsDTO.getFilename();
         String suffix = fileName.substring(fileName.lastIndexOf("."));
-        if(objectName == null || objectName.length() == 0){
+        if(objectName == null || objectName.isEmpty()){
             objectName = getFileObject(fileMd5, suffix);
         }
         boolean result = minioUtils.uploadFile(minioConfig.getFileBucket(), tempFilePath, objectName);

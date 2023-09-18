@@ -34,10 +34,12 @@ public class MinioUtils {
      * @return 返回true/false
      */
     public boolean uploadFile(String bucket, String fileName, String object) {
+        String contentType = object.endsWith(".html") ? "text/html" : "application/octet-stream";
         try {
             minioClient.uploadObject(UploadObjectArgs.builder()
                     .bucket(bucket)
                     .filename(fileName)
+                    .contentType(contentType)
                     .object(object)
                     .build());
             return true;
