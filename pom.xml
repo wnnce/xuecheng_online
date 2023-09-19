@@ -15,6 +15,7 @@
         <module>xuecheng-system</module>
         <module>xuecheng-gateway</module>
         <module>xuecheng-media</module>
+        <module>xuecheng-search</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

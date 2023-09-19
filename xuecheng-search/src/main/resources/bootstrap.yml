@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: search
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: 10.10.10.10:8848
+      discovery:
+        namespace: dev
+        group: xuecheng-online
+      config:
+        namespace: dev
+        group: xuecheng-online
+        file-extension: yaml
+        refresh-enabled: true
+        shared-configs:
+          - data-id: common-${spring.profiles.active}.yaml
+            group: xuecheng-online-common
+            refresh: true
+    config:
+      override-none: true
+  elasticsearch:
+    uris: http://10.10.10.10:9200
+    username: elastic
+    password: '_T4HUl1L5GOVsXY4Wx9h'
+server:
+  servlet:
+    context-path: /search
+  port: 8073
