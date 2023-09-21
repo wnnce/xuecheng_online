@@ -20,11 +20,3 @@ spring:
             refresh: true
     config:
       override-none: true
-  elasticsearch:
-    uris: http://10.10.10.10:9200
-    username: elastic
-    password: '_T4HUl1L5GOVsXY4Wx9h'
-server:
-  servlet:
-    context-path: /search
-  port: 8073

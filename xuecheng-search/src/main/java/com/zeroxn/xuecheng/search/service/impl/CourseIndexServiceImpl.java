@@ -1,10 +1,11 @@
 package com.zeroxn.xuecheng.search.service.impl;
 
 import com.zeroxn.xuecheng.base.exception.CustomException;
+import com.zeroxn.xuecheng.search.clients.DocumentClient;
 import com.zeroxn.xuecheng.search.entity.CourseIndex;
 import com.zeroxn.xuecheng.search.service.CourseIndexService;
-import org.springframework.data.elasticsearch.core.DocumentOperations;
-import org.springframework.data.elasticsearch.core.query.UpdateResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,36 +15,35 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CourseIndexServiceImpl implements CourseIndexService {
+    private static final Logger logger = LoggerFactory.getLogger(CourseIndexServiceImpl.class);
+    private final DocumentClient documentClient;
 
-    private final DocumentOperations documentOperations;
-
-    public CourseIndexServiceImpl(DocumentOperations documentOperations) {
-        this.documentOperations = documentOperations;
+    public CourseIndexServiceImpl(DocumentClient documentClient) {
+        this.documentClient = documentClient;
     }
-
     @Override
     public boolean addCourseIndex(CourseIndex courseIndex) {
         if (courseIndex.getId() == null) {
-            throw new CustomException("课程Id为空");
+            logger.error("添加课程索引ID不能为空");
+            throw new CustomException("课程索引ID为空");
         }
-        CourseIndex result = documentOperations.save(courseIndex);
-        return result.getId() != null;
+        String result = documentClient.save(courseIndex);
+        return result != null;
     }
 
     @Override
     public boolean updateCourseIndex(CourseIndex courseIndex) {
-        if (courseIndex.getId() == null) {
-            throw new CustomException("课程Id为空");
+        if (courseIndex.getId() == null){
+            logger.error("更新课程索引ID不能为空");
+            throw new CustomException("课程索引ID为空");
         }
-        UpdateResponse response = documentOperations.update(courseIndex);
-        System.out.println(response);
-        return true;
+        String result = documentClient.update(courseIndex);
+        return result != null;
     }
 
     @Override
-    public boolean deleteCourseIndex(String id) {
-        String delete = documentOperations.delete(id, CourseIndex.class);
-        System.out.println(delete);
-        return true;
+    public boolean deleteCourseIndex(Long id) {
+        String result = documentClient.delete(id.toString(), CourseIndex.class);
+        return result != null;
     }
 }

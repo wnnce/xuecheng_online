@@ -10,5 +10,5 @@ import com.zeroxn.xuecheng.search.entity.CourseIndex;
 public interface CourseIndexService {
     boolean addCourseIndex(CourseIndex courseIndex);
     boolean updateCourseIndex(CourseIndex courseIndex);
-    boolean deleteCourseIndex(String id);
+    boolean deleteCourseIndex(Long id);
 }

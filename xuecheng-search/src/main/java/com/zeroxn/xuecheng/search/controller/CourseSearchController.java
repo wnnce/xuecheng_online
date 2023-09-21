@@ -24,9 +24,10 @@ public class CourseSearchController {
     public CourseSearchController(CourseSearchService searchService) {
         this.searchService = searchService;
     }
-    @Operation(description = "搜索课程接口")
-    @GetMapping("/list")
-    public SearchPageResultDto<CourseIndex> searchCourse(PageParams params, SearchCourseParamDto searchDto) {
 
+    @GetMapping("/list")
+    @Operation(description = "课程搜索接口")
+    public SearchPageResultDto<CourseIndex> searchCourse(PageParams params, SearchCourseParamDto searchDto) {
+        return searchService.queryCourseIndex(params, searchDto);
     }
 }
