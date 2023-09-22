@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeroxn.xuecheng.search.clients.DocumentClient;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -47,8 +48,8 @@ public class ElasticsearchConfigurations {
     @ConditionalOnClass({ElasticsearchTransport.class})
     static class ElasticsearchTransportConfiguration {
         @Bean
-        ElasticsearchTransport elasticsearchTransport(RestClient restClient) {
-            return new RestClientTransport(restClient, new JacksonJsonpMapper());
+        ElasticsearchTransport elasticsearchTransport(RestClient restClient, ObjectMapper objectMapper) {
+            return new RestClientTransport(restClient, new JacksonJsonpMapper(objectMapper));
         }
     }
     @Configuration(
