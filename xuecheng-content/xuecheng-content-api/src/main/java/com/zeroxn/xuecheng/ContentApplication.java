@@ -1,6 +1,7 @@
 package com.zeroxn.xuecheng;
 
 import com.zeroxn.xuecheng.content.client.MediaClient;
+import com.zeroxn.xuecheng.content.client.SearchClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan("com.zeroxn.xuecheng.content.mapper")
 @EnableTransactionManagement
 @EnableAsync
-@EnableFeignClients(clients = {MediaClient.class})
+@EnableFeignClients(clients = {MediaClient.class, SearchClient.class})
 public class ContentApplication {
     public static void main(String[] args) {
         SpringApplication.run(ContentApplication.class, args);

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.utils.CommonUtils;
 import com.zeroxn.xuecheng.content.client.MediaClient;
+import com.zeroxn.xuecheng.content.client.SearchClient;
 import com.zeroxn.xuecheng.content.config.FileToMultipartFile;
 import com.zeroxn.xuecheng.content.mapper.CoursePublishMapper;
 import com.zeroxn.xuecheng.content.mapper.CoursePublishPreMapper;
@@ -28,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -57,12 +59,13 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     private final CoursePublishPreMapper coursePublishPreMapper;
     private final ObjectMapper objectMapper;
     private final MediaClient mediaClient;
+    private final SearchClient searchClient;
     private final KafkaTemplate<String, Long> kafkaTemplate;
     public CoursePublishServiceImpl(CourseAsyncTask courseAsyncTask, CourseBaseService courseBaseService,
                                     TeachPlanService teachPlanService, CoursePublishMapper coursePublishMapper,
                                     ObjectMapper objectMapper, CoursePublishPreMapper coursePublishPreMapper,
                                     KafkaTemplate<String, Long> kafkaTemplate, CoursePreviewService previewService,
-                                    MediaClient mediaClient) throws IOException {
+                                    MediaClient mediaClient, SearchClient searchClient) throws IOException {
         this.courseAsyncTask = courseAsyncTask;
         this.courseBaseService = courseBaseService;
         this.teachPlanService = teachPlanService;
@@ -72,6 +75,7 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         this.kafkaTemplate = kafkaTemplate;
         this.previewService = previewService;
         this.mediaClient = mediaClient;
+        this.searchClient = searchClient;
         configuration = new Configuration(Configuration.VERSION_2_3_31);
         String classpath = this.getClass().getResource("/").getPath();
         configuration.setDirectoryForTemplateLoading(new File(classpath + "/templates"));
@@ -180,5 +184,13 @@ public class CoursePublishServiceImpl implements CoursePublishService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean saveCourseIndex(Long courseId) {
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        CourseIndex courseIndex = new CourseIndex();
+        BeanUtils.copyProperties(coursePublish, courseIndex);
+        return searchClient.addIndex(courseIndex);
     }
 }

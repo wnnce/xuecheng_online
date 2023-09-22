@@ -70,15 +70,16 @@ public class CourseKafkaHandler {
             // TODO: 所有操作都成功后执行的后置操作
             publishTaskService.deletePublishTask(courseId);
         }
-
-
     }
 
     private CompletableFuture<Boolean> saveCourseIndex(Long courseId){
         // TODO:将课程索引保存到Elasticsearch 返回保存结果 如果保存失败则往 xxx表中添加数据
         return CompletableFuture.supplyAsync(() -> {
-            publishTaskService.updateTask1Status(courseId, 1);
-            return true;
+            boolean result = publishService.saveCourseIndex(courseId);
+            if (result) {
+                publishTaskService.updateTask1Status(courseId, 1);
+            }
+            return result;
         }, taskService);
     }
     private CompletableFuture<Boolean> saveCourseCache(Long courseId){

@@ -13,4 +13,5 @@ public interface CoursePublishService {
     void coursePublish(Long companyId, Long courseId);
     MultipartFile generateHtml(Long courseId);
     boolean uploadHtmlToMinio(Long courseId, MultipartFile htmlFile);
+    boolean saveCourseIndex(Long courseId);
 }
