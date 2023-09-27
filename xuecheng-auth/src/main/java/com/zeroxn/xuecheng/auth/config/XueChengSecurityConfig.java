@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -22,7 +25,7 @@ import java.util.UUID;
  * @Description:
  */
 @EnableWebSecurity
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class XueChengSecurityConfig {
     @Bean
     @ConditionalOnMissingBean(UserDetailsService.class)
@@ -30,27 +33,24 @@ public class XueChengSecurityConfig {
         UserDetails user1 = User
                 .withUsername("user")
                 .password("123456")
-                .authorities("user")
+                .roles("user")
                 .build();
         UserDetails user2 = User
                 .withUsername("admin")
                 .password("123456")
-                .authorities("admin")
+                .roles("admin")
                 .build();
         return new InMemoryUserDetailsManager(user1, user2);
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/role/r1")
-                .hasAuthority("user")
-                .requestMatchers("/role/r2")
-                .hasAuthority("admin")
-                .anyRequest().authenticated()
-                .and())
-                .formLogin(form -> form
-                        .successForwardUrl("/success")
-                        .permitAll());
+                .requestMatchers("/role/r1").hasRole("user")
+                .requestMatchers("/role/r2").hasRole("admin")
+                .requestMatchers("/oauth2/**").permitAll()
+                .anyRequest().authenticated())
+                .csrf().disable()
+                .formLogin(Customizer.withDefaults());
         return http.build();
     }
     @Bean

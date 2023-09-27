@@ -36,7 +36,7 @@
         <elasticsearch-java.version>8.7.0</elasticsearch-java.version>
         <spring-doc.version>2.1.0</spring-doc.version>
         <xxl-job-core.version>2.4.0</xxl-job-core.version>
-        <spring-authorization-server.version>1.0.3</spring-authorization-server.version>
+        <spring-security-authorization-server.version>1.0.3</spring-security-authorization-server.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -97,7 +97,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-authorization-server</artifactId>
-                <version>${spring-authorization-server.version}</version>
+                <version>${spring-security-authorization-server.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

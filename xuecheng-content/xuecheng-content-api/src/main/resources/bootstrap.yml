@@ -28,5 +28,3 @@ spring:
           - data-id: feign-${spring.profiles.active}.yaml
             group: xuecheng-online-common
             refresh: true
-
-

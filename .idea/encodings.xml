@@ -4,6 +4,8 @@
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-auth/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-auth/xuecheng-resource/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-base/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-content/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-content/src/main/resources" charset="UTF-8" />
@@ -17,6 +19,7 @@
     <file url="file://$PROJECT_DIR$/xuecheng-media/xuecheng-media-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-media/xuecheng-media-model/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-media/xuecheng-media-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xuecheng-resource/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-search/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-system/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xuecheng-system/src/main/resources" charset="UTF-8" />

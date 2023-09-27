@@ -30,6 +30,7 @@ public class CourseBashController {
         this.courseBaseService = courseBaseService;
     }
     @PostMapping("/list")
+
     @Operation(summary = "查询课程列表")
     public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDTO paramsDTO){
         return courseBaseService.queryCourseBaseListByPage(pageParams, paramsDTO);

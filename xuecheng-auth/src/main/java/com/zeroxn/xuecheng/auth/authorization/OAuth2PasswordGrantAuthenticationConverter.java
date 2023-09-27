@@ -44,9 +44,6 @@ public class OAuth2PasswordGrantAuthenticationConverter implements Authenticatio
             OAuth2EndpointUtils.throwError("invalid_request", OAuth2ParameterNames.PASSWORD, ERROR_URI);
         }
         String scope = parameters.getFirst(OAuth2ParameterNames.SCOPE);
-        if (!StringUtils.hasText(scope) || parameters.get(OAuth2ParameterNames.SCOPE).size() != 1) {
-            OAuth2EndpointUtils.throwError("invalid_request", OAuth2ParameterNames.SCOPE, ERROR_URI);
-        }
         Set<String> scopes = scope != null ? Set.of(scope.split(" ")) : null;
         return new OAuth2PasswordGrantAuthenticationToken(username, password, authentication, scopes);
     }

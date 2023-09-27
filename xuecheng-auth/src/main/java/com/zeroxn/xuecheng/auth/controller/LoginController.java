@@ -29,6 +29,7 @@ public class LoginController {
         return "登陆成功";
     }
     @GetMapping("/user/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public User getUser(@PathVariable("id") String id) {
         return userMapper.selectById(id);
     }
