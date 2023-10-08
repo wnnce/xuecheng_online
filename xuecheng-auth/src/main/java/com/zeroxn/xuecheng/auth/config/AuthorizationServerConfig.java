@@ -1,5 +1,6 @@
 package com.zeroxn.xuecheng.auth.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -7,6 +8,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.zeroxn.xuecheng.auth.authorization.OAuth2PasswordGrantAuthenticationConverter;
 import com.zeroxn.xuecheng.auth.authorization.OAuth2PasswordGrantAuthenticationProvider;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,8 +52,8 @@ import java.util.UUID;
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
     @Bean
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, UserDetailsService userDetailsService,
-                                                                      PasswordEncoder passwordEncoder) throws Exception {
+    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http, ObjectMapper objectMapper,
+                                                                      ApplicationContext applicationContext) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = OAuth2ConfigurerUtils.getTokenGenerator(http);
         OAuth2AuthorizationService authorizationService = OAuth2ConfigurerUtils.getAuthorizationService(http);
@@ -60,7 +62,7 @@ public class AuthorizationServerConfig {
                 .oidc(Customizer.withDefaults())
                 .tokenEndpoint(tokenEndpoint -> tokenEndpoint
                         .accessTokenRequestConverter(new OAuth2PasswordGrantAuthenticationConverter())
-                        .authenticationProvider(new OAuth2PasswordGrantAuthenticationProvider(userDetailsService, passwordEncoder, authorizationService, tokenGenerator)));
+                        .authenticationProvider(new OAuth2PasswordGrantAuthenticationProvider(authorizationService, objectMapper, tokenGenerator, applicationContext)));
         http.exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();

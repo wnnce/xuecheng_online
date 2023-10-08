@@ -1,13 +1,15 @@
 package com.zeroxn.xuecheng.auth.authorization;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeroxn.xuecheng.auth.authorization.utils.OAuth2AuthenticationProviderUtils;
+import com.zeroxn.xuecheng.auth.dto.AuthParamsDto;
+import com.zeroxn.xuecheng.auth.dto.UserExtend;
+import com.zeroxn.xuecheng.auth.service.AuthService;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -22,9 +24,7 @@ import org.springframework.security.oauth2.server.authorization.token.DefaultOAu
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
-import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author: lisang
@@ -33,24 +33,21 @@ import java.util.stream.Collectors;
  */
 public class OAuth2PasswordGrantAuthenticationProvider implements AuthenticationProvider {
     private static final OAuth2TokenType ID_TOKEN_TOKEN_TYPE = new OAuth2TokenType("id_token");
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
     private final OAuth2AuthorizationService authorizationService;
     private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
+    private final ObjectMapper objectMapper;
+    private final ApplicationContext applicationContext;
 
-    public OAuth2PasswordGrantAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder,
-                                                     OAuth2AuthorizationService authorizationService,
-                                                     OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
+    public OAuth2PasswordGrantAuthenticationProvider(OAuth2AuthorizationService authorizationService, ObjectMapper objectMapper,
+                                                     OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
+                                                     ApplicationContext applicationContext) {
         this.authorizationService = authorizationService;
         this.tokenGenerator = tokenGenerator;
+        this.objectMapper = objectMapper;
+        this.applicationContext = applicationContext;
     }
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-
-        // todo 用户信息无法保存到token中
-
         OAuth2PasswordGrantAuthenticationToken passwordAuthenticationToken = (OAuth2PasswordGrantAuthenticationToken) authentication;
         OAuth2ClientAuthenticationToken clientPrincipal = OAuth2AuthenticationProviderUtils.getAuthenticatedClientElseThrowInvalidClient((Authentication) passwordAuthenticationToken.getPrincipal());
         RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
@@ -69,15 +66,35 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
         }else {
             scopes = registeredClient.getScopes();
         }
-        String username = passwordAuthenticationToken.getUsername();
-        String password = passwordAuthenticationToken.getPassword();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+        String authParamsJson = passwordAuthenticationToken.getUsername();
+        AuthParamsDto authParams = null;
+        try{
+            authParams = objectMapper.readValue(authParamsJson, AuthParamsDto.class);
+        }catch (JsonProcessingException e) {
+            throw new OAuth2AuthenticationException("The requested data does not meet the requirements");
+        }
+        AuthService authService = null;
+        switch (authParams.getAuthType()){
+            case "password" -> authService = applicationContext.getBean("PasswordAuthService", AuthService.class);
+            case "wx" -> authService = applicationContext.getBean("WechatAuthService", AuthService.class);
+            case "sms" -> authService = applicationContext.getBean("SMSAuthService", AuthService.class);
+            default -> throw new OAuth2AuthenticationException("Auth types are not supported");
+        }
+        UserExtend userExtend = authService.execute(authParams);
+        if (userExtend == null) {
             throw new OAuth2AuthenticationException("The resource does not exist or the credentials are invalid");
         }
+        userExtend.setPassword(null);
+        String userInfoJson;
+        try {
+            userInfoJson = objectMapper.writeValueAsString(userExtend);
+        }catch (JsonProcessingException e) {
+            throw new OAuth2AuthenticationException("Serialization of user information failed");
+        }
+        UserInfoAuthenticationToken principal= new UserInfoAuthenticationToken(userInfoJson, null);
         DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
                 .registeredClient(registeredClient)
-                .principal(clientPrincipal)
+                .principal(principal)
                 .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                 .authorizedScopes(scopes)
                 .authorizationGrantType(passwordAuthenticationToken.getGrantType())
@@ -92,14 +109,14 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
         OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, generatedAccessToken.getTokenValue(),
                 generatedAccessToken.getIssuedAt(), generatedAccessToken.getExpiresAt(), scopes);
         Map<String, Object> tokenData = new HashMap<>();
-        tokenData.put("username", userDetails.getUsername());
-        tokenData.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
+        tokenData.put("username", userExtend);
+//        tokenData.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
         if (!scopes.isEmpty()) {
             tokenData.put("scopes", scopes);
         }
         OAuth2Authorization.Builder builder = OAuth2Authorization
                 .withRegisteredClient(registeredClient)
-                .principalName(userDetails.getUsername())
+                .principalName(userExtend.getUsername())
                 .authorizationGrantType(passwordAuthenticationToken.getGrantType())
                 .token(accessToken, m -> m.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, tokenData));
 
@@ -131,8 +148,7 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
             additionalParameters = new HashMap<>();
             additionalParameters.put("id_token", idToken.getTokenValue());
         }
-
-        OAuth2AccessTokenAuthenticationToken authenticationToken = null;
+        OAuth2AccessTokenAuthenticationToken authenticationToken;
         if (refreshToken != null && !additionalParameters.isEmpty()) {
             authenticationToken = new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, additionalParameters);
         }else if (refreshToken != null) {

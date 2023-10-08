@@ -24,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class XueChengSecurityConfig {
     @Bean
     @ConditionalOnMissingBean(UserDetailsService.class)
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+    public UserDetailsService userDetailsService() {
         UserDetails user1 = User
                 .withUsername("user")
                 .password("123456")
