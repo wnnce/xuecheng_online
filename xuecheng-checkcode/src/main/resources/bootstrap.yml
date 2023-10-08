@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: check-code-server
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: 10.10.10.10:8848
+      discovery:
+        namespace: dev
+        group: xuecheng-online
+      config:
+        namespace: dev
+        group: xuecheng-online
+        file-extension: yaml
+        refresh-enabled: true
+        extension-configs:
+          - data-id: check-code-server-${spring.profiles.active}.yaml
+            group: xuecheng-online
+            refresh: true
+        shared-configs:
+          - data-id: redis-${spring.profiles.active}.yaml
+            group: xuecheng-online-common
+            refresh: true

@@ -1,0 +1,6 @@
+# 生成验证码
+POST {{gateway}}/checkcode/pic
+
+###
+# 校验验证码
+POST {{checkcode}}/verify?key=checkCode:d2eebe0b48104c8f8c83a83bdc8eddd6&code=2JWE

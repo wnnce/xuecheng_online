@@ -17,6 +17,7 @@
         <module>xuecheng-media</module>
         <module>xuecheng-search</module>
         <module>xuecheng-auth</module>
+        <module>xuecheng-checkcode</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -37,6 +38,7 @@
         <spring-doc.version>2.1.0</spring-doc.version>
         <xxl-job-core.version>2.4.0</xxl-job-core.version>
         <spring-security-authorization-server.version>1.0.3</spring-security-authorization-server.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -98,6 +100,11 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-authorization-server</artifactId>
                 <version>${spring-security-authorization-server.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

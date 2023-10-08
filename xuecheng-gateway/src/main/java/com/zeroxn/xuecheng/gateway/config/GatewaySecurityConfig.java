@@ -15,7 +15,7 @@ public class GatewaySecurityConfig {
     @Bean
     SecurityWebFilterChain gatewayExchangeSecurityFilterChain(ServerHttpSecurity http) {
         return http.authorizeExchange(exchanges -> exchanges
-                .pathMatchers("/auth/**", "/content/open/**", "/media/open/**").permitAll()
+                .pathMatchers("/auth/**", "/content/open/**", "/media/open/**", "/checkcode/**").permitAll()
                 .anyExchange().authenticated())
                 .csrf().disable()
                 .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt).build();

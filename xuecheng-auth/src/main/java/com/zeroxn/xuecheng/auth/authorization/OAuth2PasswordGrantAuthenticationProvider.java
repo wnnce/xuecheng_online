@@ -67,7 +67,7 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
             scopes = registeredClient.getScopes();
         }
         String authParamsJson = passwordAuthenticationToken.getUsername();
-        AuthParamsDto authParams = null;
+        AuthParamsDto authParams;
         try{
             authParams = objectMapper.readValue(authParamsJson, AuthParamsDto.class);
         }catch (JsonProcessingException e) {
