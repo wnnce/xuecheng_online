@@ -2,6 +2,7 @@ package com.zeroxn.xuecheng.auth.service;
 
 import com.zeroxn.xuecheng.auth.dto.AuthParamsDto;
 import com.zeroxn.xuecheng.auth.dto.UserExtend;
+import com.zeroxn.xuecheng.auth.entity.User;
 
 /**
  * @Author: lisang

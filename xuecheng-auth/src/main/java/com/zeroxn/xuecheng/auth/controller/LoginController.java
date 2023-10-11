@@ -2,9 +2,13 @@ package com.zeroxn.xuecheng.auth.controller;
 
 import com.zeroxn.xuecheng.auth.entity.User;
 import com.zeroxn.xuecheng.auth.mapper.UserMapper;
+import com.zeroxn.xuecheng.auth.service.WechatAuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,30 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
  * @DateTime: 2023-09-22 20:04:24
  * @Description:
  */
-@RestController
+@Controller
 @Tag(name = "登录接口")
 public class LoginController {
-
-    private final UserMapper userMapper;
-
-    private LoginController(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private final WechatAuthService wechatAuthService;
+    public LoginController(WechatAuthService wechatAuthService) {
+        this.wechatAuthService = wechatAuthService;
     }
-    @RequestMapping("/success")
-    public String loginSuccess() {
-        return "登陆成功";
-    }
-    @GetMapping("/user/{id}")
-    @PreAuthorize("hasRole('admin')")
-    public User getUser(@PathVariable("id") String id) {
-        return userMapper.selectById(id);
-    }
-    @GetMapping("/role/r1")
-    public String testRoleR1() {
-        return "r1";
-    }
-    @GetMapping("/role/r2")
-    public String testRoleR2() {
-        return "r2";
+    @RequestMapping("/wxLogin")
+    public String wechatLogin(String code, String state) {
+        logger.info("接收到微信回调参数，code：{}，state：{}", code, state);
+        User user = wechatAuthService.wechatAuth(code);
+        if (user == null) {
+            return "redirect:http://xuecheng/ml/error.html";
+        }
+        return "redirect:http://www.xuecheng.ml/sign.html?username=" + user.getUsername() + "&authType=wx";
     }
 }

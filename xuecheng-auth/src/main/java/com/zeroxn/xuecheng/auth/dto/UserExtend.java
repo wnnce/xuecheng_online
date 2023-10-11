@@ -1,10 +1,7 @@
 package com.zeroxn.xuecheng.auth.dto;
 
 import com.zeroxn.xuecheng.auth.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,5 +15,5 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserExtend extends User {
-    private List<String> permissions = new ArrayList<>();
+    private List<String> permissions;
 }

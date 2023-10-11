@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.zeroxn.xuecheng.auth.authorization.OAuth2PasswordGrantAuthenticationConverter;
 import com.zeroxn.xuecheng.auth.authorization.OAuth2PasswordGrantAuthenticationProvider;
+import com.zeroxn.xuecheng.auth.client.CheckCodeClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

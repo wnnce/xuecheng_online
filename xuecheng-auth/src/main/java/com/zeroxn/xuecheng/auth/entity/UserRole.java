@@ -1,6 +1,7 @@
 package com.zeroxn.xuecheng.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  * @since 2023-09-22
  */
 @TableName("xc_user_role")
+@Builder
 public class UserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -3,9 +3,11 @@ package com.zeroxn.xuecheng.auth.authorization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zeroxn.xuecheng.auth.authorization.utils.OAuth2AuthenticationProviderUtils;
+import com.zeroxn.xuecheng.auth.client.CheckCodeClient;
 import com.zeroxn.xuecheng.auth.dto.AuthParamsDto;
 import com.zeroxn.xuecheng.auth.dto.UserExtend;
 import com.zeroxn.xuecheng.auth.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -81,9 +83,6 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
             default -> throw new OAuth2AuthenticationException("Auth types are not supported");
         }
         UserExtend userExtend = authService.execute(authParams);
-        if (userExtend == null) {
-            throw new OAuth2AuthenticationException("The resource does not exist or the credentials are invalid");
-        }
         userExtend.setPassword(null);
         String userInfoJson;
         try {
