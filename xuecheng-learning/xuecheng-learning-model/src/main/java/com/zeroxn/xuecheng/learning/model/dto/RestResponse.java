@@ -1,12 +1,7 @@
-package com.zeroxn.xuecheng.media.model.DTO;
+package com.zeroxn.xuecheng.learning.model.dto;
 
 import lombok.Data;
 
-/**
- * @Author: lisang
- * @DateTime: 2023/5/26 下午5:34
- * @Description:
- */
 @Data
 public class RestResponse<T> {
     private int code;

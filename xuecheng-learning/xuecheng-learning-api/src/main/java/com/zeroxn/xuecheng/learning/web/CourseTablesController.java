@@ -1,4 +1,4 @@
-package com.zeroxn.xuecheng.learning.controller;
+package com.zeroxn.xuecheng.learning.web;
 
 import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.learning.model.dto.ChooseCourseDto;
@@ -7,7 +7,6 @@ import com.zeroxn.xuecheng.learning.model.entity.CourseTables;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
