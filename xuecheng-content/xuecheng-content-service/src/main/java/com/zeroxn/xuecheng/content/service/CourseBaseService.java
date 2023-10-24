@@ -14,7 +14,7 @@ import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
  * @Description:
  */
 public interface CourseBaseService extends IService<CourseBase> {
-    PageResult<CourseBase> queryCourseBaseListByPage(PageParams params, QueryCourseParamsDTO courseParamsDTO);
+    PageResult<CourseBase> queryCourseBaseListByPage(Long companyId, PageParams params, QueryCourseParamsDTO courseParamsDTO);
     CourseBaseInfoDTO addCourseBase(Long companyId, CourseDTO courseDTO);
     CourseBaseInfoDTO queryCourseBaseInfoById(Long courseId);
     CourseBaseInfoDTO updateCourseBase(Long companyId, CourseDTO courseDTO);

@@ -14,8 +14,10 @@ spring:
         group: xuecheng-online
         refresh-enabled: true
         file-extension: yaml
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8074/auth
+        shared-configs:
+          - data-id: resource-server-${spring.profiles.active}.yaml
+            group: xuecheng-online-common
+            refresh: true
+logging:
+  level:
+    org.springframework.security: trace

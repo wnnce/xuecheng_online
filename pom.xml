@@ -18,6 +18,7 @@
         <module>xuecheng-search</module>
         <module>xuecheng-auth</module>
         <module>xuecheng-checkcode</module>
+        <module>xuecheng-learning</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

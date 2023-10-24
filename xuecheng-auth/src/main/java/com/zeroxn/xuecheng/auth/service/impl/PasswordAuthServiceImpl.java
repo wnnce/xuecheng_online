@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.zeroxn.xuecheng.auth.client.CheckCodeClient;
 import com.zeroxn.xuecheng.auth.dto.AuthParamsDto;
 import com.zeroxn.xuecheng.auth.dto.UserExtend;
+import com.zeroxn.xuecheng.auth.entity.Menu;
 import com.zeroxn.xuecheng.auth.entity.User;
+import com.zeroxn.xuecheng.auth.mapper.MenuMapper;
 import com.zeroxn.xuecheng.auth.mapper.UserMapper;
 import com.zeroxn.xuecheng.auth.service.AuthService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author: lisang
@@ -21,25 +25,28 @@ import org.springframework.stereotype.Service;
 @Service("PasswordAuthService")
 public class PasswordAuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
+    private final MenuMapper menuMapper;
     private final PasswordEncoder passwordEncoder;
     private final CheckCodeClient checkCodeClient;
 
-    public PasswordAuthServiceImpl(UserMapper userMapper, PasswordEncoder passwordEncoder, CheckCodeClient checkCodeClient) {
+    public PasswordAuthServiceImpl(UserMapper userMapper, PasswordEncoder passwordEncoder, CheckCodeClient checkCodeClient,
+                                   MenuMapper menuMapper) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.checkCodeClient = checkCodeClient;
+        this.menuMapper = menuMapper;
     }
     @Override
     public UserExtend execute(AuthParamsDto authParams) {
 
-        if (StringUtils.isEmpty(authParams.getCheckcodekey()) || StringUtils.isEmpty(authParams.getCheckcode())) {
-            throw new OAuth2AuthenticationException("验证码不能为空");
-        }
-        // 校验验证码
-        boolean validation = checkCodeClient.validation(authParams.getCheckcodekey(), authParams.getCheckcode());
-        if (!validation) {
-            throw new OAuth2AuthenticationException("验证码错误");
-        }
+//        if (StringUtils.isEmpty(authParams.getCheckcodekey()) || StringUtils.isEmpty(authParams.getCheckcode())) {
+//            throw new OAuth2AuthenticationException("验证码不能为空");
+//        }
+//        // 校验验证码
+//        boolean validation = checkCodeClient.validation(authParams.getCheckcodekey(), authParams.getCheckcode());
+//        if (!validation) {
+//            throw new OAuth2AuthenticationException("验证码错误");
+//        }
 
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUsername, authParams.getUsername());
@@ -52,6 +59,10 @@ public class PasswordAuthServiceImpl implements AuthService {
         }
         UserExtend userExtend = new UserExtend();
         BeanUtils.copyProperties(findUser, userExtend);
+        List<Menu> menuList = menuMapper.listUserAuthorities(findUser.getId());
+        if (menuList != null && !menuList.isEmpty()) {
+            userExtend.setPermissions(menuList.stream().map(Menu::getCode).toList());
+        }
         return userExtend;
     }
 }

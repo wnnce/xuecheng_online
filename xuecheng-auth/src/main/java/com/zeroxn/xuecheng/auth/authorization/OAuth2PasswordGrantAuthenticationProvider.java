@@ -12,6 +12,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -27,6 +31,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author: lisang
@@ -90,7 +95,14 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
         }catch (JsonProcessingException e) {
             throw new OAuth2AuthenticationException("Serialization of user information failed");
         }
-        UserInfoAuthenticationToken principal= new UserInfoAuthenticationToken(userInfoJson, null);
+        List<SimpleGrantedAuthority> authorities = null;
+        if (userExtend.getPermissions() != null && !userExtend.getPermissions().isEmpty()) {
+            authorities = userExtend.getPermissions().stream().map(SimpleGrantedAuthority::new).toList();
+            Set<String> backupScopes = new HashSet<>(scopes);
+            backupScopes.addAll(userExtend.getPermissions());
+            scopes = backupScopes;
+        }
+        UserInfoAuthenticationToken principal= new UserInfoAuthenticationToken(userInfoJson, authorities);
         DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
                 .registeredClient(registeredClient)
                 .principal(principal)
@@ -109,7 +121,6 @@ public class OAuth2PasswordGrantAuthenticationProvider implements Authentication
                 generatedAccessToken.getIssuedAt(), generatedAccessToken.getExpiresAt(), scopes);
         Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("username", userExtend);
-//        tokenData.put("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
         if (!scopes.isEmpty()) {
             tokenData.put("scopes", scopes);
         }

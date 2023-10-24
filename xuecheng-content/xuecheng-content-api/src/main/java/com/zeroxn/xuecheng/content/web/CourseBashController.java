@@ -8,10 +8,16 @@ import com.zeroxn.xuecheng.content.model.DTO.CourseBaseInfoDTO;
 import com.zeroxn.xuecheng.content.model.DTO.QueryCourseParamsDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
 import com.zeroxn.xuecheng.content.service.CourseBaseService;
+import com.zeroxn.xuecheng.content.utils.SecurityUtils;
+import com.zeroxn.xuecheng.content.utils.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +36,11 @@ public class CourseBashController {
         this.courseBaseService = courseBaseService;
     }
     @PostMapping("/list")
-
+    @PreAuthorize("hasAuthority('SCOPE_xc_teachmanager_course_list')")
     @Operation(summary = "查询课程列表")
     public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDTO paramsDTO){
-        return courseBaseService.queryCourseBaseListByPage(pageParams, paramsDTO);
+        User user = SecurityUtils.getUser();
+        return courseBaseService.queryCourseBaseListByPage(user.getCompanyId(), pageParams, paramsDTO);
     }
     @PostMapping
     @Operation(summary = "添加课程")

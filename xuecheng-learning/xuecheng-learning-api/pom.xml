@@ -4,19 +4,35 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.zeroxn.xuecheng</groupId>
-        <artifactId>xuecheng-content</artifactId>
+        <groupId>com.zeroxn.bbs</groupId>
+        <artifactId>xuecheng-learning</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>xuecheng-content-api</artifactId>
+    <artifactId>xuecheng-learning-api</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>com.zeroxn.xuecheng</groupId>
+            <artifactId>xuecheng-base</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zeroxn.bbs</groupId>
+            <artifactId>xuecheng-learning-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zeroxn.bbs</groupId>
+            <artifactId>xuecheng-learning-model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -69,21 +85,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>3.0.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.zeroxn.xuecheng</groupId>
-            <artifactId>xuecheng-content-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zeroxn.xuecheng</groupId>
-            <artifactId>xuecheng-content-model</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zeroxn.xuecheng</groupId>
-            <artifactId>xuecheng-base</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

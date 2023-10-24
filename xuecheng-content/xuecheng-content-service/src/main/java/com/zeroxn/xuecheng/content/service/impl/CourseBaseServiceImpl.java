@@ -43,7 +43,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
         this.categoryService = categoryService;
     }
     @Override
-    public PageResult<CourseBase> queryCourseBaseListByPage(PageParams params, QueryCourseParamsDTO courseParamsDTO) {
+    public PageResult<CourseBase> queryCourseBaseListByPage(Long companyId, PageParams params, QueryCourseParamsDTO courseParamsDTO) {
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
         if(courseParamsDTO != null){
             queryWrapper.like(StringUtils.isNotEmpty(courseParamsDTO.getCourseName()), CourseBase::getName,
@@ -52,6 +52,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
                     courseParamsDTO.getAuditStatus());
             queryWrapper.eq(StringUtils.isNotEmpty(courseParamsDTO.getPublishStatus()),
                     CourseBase::getStatus, courseParamsDTO.getPublishStatus());
+            queryWrapper.eq(CourseBase::getCompanyId, companyId);
         }
         Page<CourseBase> basePage = new Page<>(params.getPageNo(), params.getPageSize());
         Page<CourseBase> pageResult = baseMapper.selectPage(basePage, queryWrapper);

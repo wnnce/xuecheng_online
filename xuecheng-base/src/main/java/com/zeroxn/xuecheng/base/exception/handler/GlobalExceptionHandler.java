@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +58,9 @@ public class GlobalExceptionHandler {
     public ErrorResponse handlerException(Exception ex){
         ex.printStackTrace();
         log.error("抛出异常，{}", ex.getMessage());
+        if (ex.getMessage().equals("Access Denied")){
+            return new ErrorResponse("没有操作权限");
+        }
         return new ErrorResponse(CommonError.BASE_ERROR.getMessage());
     }
 
