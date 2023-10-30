@@ -1,14 +1,12 @@
 package com.zeroxn.xuecheng.content.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zeroxn.xuecheng.content.model.pojo.CoursePublish;
 import com.zeroxn.xuecheng.content.service.CoursePublishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: lisang
@@ -33,6 +31,13 @@ public class CoursePublishController {
     @Parameter(name = "courseId", description = "课程ID", required = true)
     public void coursePublish(@PathVariable("courseId") Long courseId){
         coursePublishService.coursePublish(1232141425L, courseId);
+    }
+
+    @GetMapping("/r/coursepublish/{courseId}")
+    @Operation(description = "查询发布课程接口")
+    @Parameter(name = "courseId", description = "课程Id", required = true)
+    public CoursePublish queryCoursePublish(@PathVariable("courseId") Long courseId) {
+        return coursePublishService.queryCoursePublish(courseId);
     }
 
 }

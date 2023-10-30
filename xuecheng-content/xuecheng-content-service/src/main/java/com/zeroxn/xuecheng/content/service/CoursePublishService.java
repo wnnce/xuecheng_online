@@ -1,6 +1,7 @@
 package com.zeroxn.xuecheng.content.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zeroxn.xuecheng.content.model.pojo.CoursePublish;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -14,4 +15,5 @@ public interface CoursePublishService {
     MultipartFile generateHtml(Long courseId);
     boolean uploadHtmlToMinio(Long courseId, MultipartFile htmlFile);
     boolean saveCourseIndex(Long courseId);
+    CoursePublish queryCoursePublish(Long courseId);
 }

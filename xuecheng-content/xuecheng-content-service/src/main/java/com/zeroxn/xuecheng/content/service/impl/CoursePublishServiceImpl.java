@@ -193,4 +193,9 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         BeanUtils.copyProperties(coursePublish, courseIndex);
         return searchClient.addIndex(courseIndex);
     }
+
+    @Override
+    public CoursePublish queryCoursePublish(Long courseId) {
+        return coursePublishMapper.selectById(courseId);
+    }
 }

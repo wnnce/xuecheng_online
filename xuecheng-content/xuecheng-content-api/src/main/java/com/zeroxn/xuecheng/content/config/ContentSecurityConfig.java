@@ -18,6 +18,7 @@ public class ContentSecurityConfig {
     @Bean
     SecurityFilterChain contentSecurityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/r/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();

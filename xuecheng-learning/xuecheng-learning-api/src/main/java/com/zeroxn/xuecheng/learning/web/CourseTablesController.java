@@ -4,6 +4,8 @@ import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.learning.model.dto.ChooseCourseDto;
 import com.zeroxn.xuecheng.learning.model.dto.CourseTablesDto;
 import com.zeroxn.xuecheng.learning.model.entity.CourseTables;
+import com.zeroxn.xuecheng.learning.utils.SecurityUtils;
+import com.zeroxn.xuecheng.learning.utils.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseTablesController {
     @PostMapping("/choosecourse/{courseId}")
     public ChooseCourseDto addChooseCourse(@PathVariable("courseId") Long courseId) {
+        User user = SecurityUtils.getUser();
+        user.getId();
         return null;
     }
     @PostMapping("/choosecourse/learnstatus/{courseId}")

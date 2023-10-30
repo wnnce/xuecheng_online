@@ -1,6 +1,8 @@
 package com.zeroxn.xuecheng.learning;
 
+import com.zeroxn.xuecheng.learning.client.ContentClient;
 import com.zeroxn.xuecheng.learning.client.MediaClient;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -11,7 +13,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Description: 学习中心启动器主类
  */
 @SpringBootApplication
-@EnableFeignClients(clients = { MediaClient.class })
+@MapperScan("com.zeroxn.xuecheng.learning.mapper")
+@EnableFeignClients(clients = { MediaClient.class, ContentClient.class})
 public class LearningApplication {
     public static void main(String[] args) {
         SpringApplication.run(LearningApplication.class, args);

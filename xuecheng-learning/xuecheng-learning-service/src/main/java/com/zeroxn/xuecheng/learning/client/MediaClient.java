@@ -13,5 +13,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "media-api", fallbackFactory = MediaClientFallbackFactory.class)
 public interface MediaClient {
     @GetMapping("/media/open/preview/{mediaId}")
-    public RestResponse<String> getVideoUrlById(@PathVariable("mediaId") String mediaId);
+    RestResponse<String> getVideoUrlById(@PathVariable("mediaId") String mediaId);
 }
