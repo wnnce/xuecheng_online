@@ -26,7 +26,7 @@
             <div class="banner-left">
                 <p>${course.courseBase.mtName} <span>${'\\ ' + course.courseBase.stName}</span></p>
                 <p class="tit">${course.courseBase.name}</p>
-                <#if course.courseBase.charge == '20100'>
+                <#if course.courseBase.charge == '201000'>
                     <p class="pic"><span class="new-pic">免费</span></p>
                 <#else>
                     <p class="pic"><span class="new-pic">特惠价格￥${course.courseBase.price}</span> <span class="old-pic">原价￥${course.courseBase.originalPrice}</span></p>
@@ -501,12 +501,11 @@
             </div>
         </div>
     </div>
-
     <div class="popup-course">
         <div class="mask"></div>
         <!--欢迎访问课程弹窗- start -->
         <div class="popup-course-box">
-            <div class="title">Java编程思想 <span class="close-popup-course-box">×</span></div>
+            <div class="title">${course.courseBase.name} <span class="close-popup-course-box">×</span></div>
             <div class="content">
                 <p>欢迎学习本课程，本课程免费您可以立即学习，也可加入我的课程表享受更优质的服务。</p>
                 <p><a href="#" @click.prevent="addCourseTable()">加入我的课程表</a>  <a href="#" @click.prevent="startLearngin()">立即学习</a></p>
@@ -517,30 +516,31 @@
         <div class="mask"></div>
         <!--支付弹窗- start -->
         <div class="popup-pay-box">
-            <div class="title">Java编程思想 <span class="close-popup-pay-box">×</span></div>
+            <div class="title">${course.courseBase.name} <span class="close-popup-pay-box">×</span></div>
             <div class="content">
                 <img :src="qrcode" width="200" height="200" alt="请点击支付宝支付按钮，并完成扫码支付。"/>
-               
+
                 <div class="info">
-                    <p class="info-tit">Java编程思想 <span>课程有效期:365天</span></p>
-                    <p class="info-pic">课程价格 : <span>￥199</span></p>
-                    <p class="info-new-pic">优惠价格 : <span>￥99</span></p>
+                    <p class="info-tit"><span>课程有效期:365天</span></p>
+                    <p class="info-pic">课程价格 : <span>￥${course.courseBase.originalPrice}</span></p>
+                    <p class="info-new-pic">优惠价格 : <span>￥${course.courseBase.price}</span></p>
                 </div>
             </div>
             <div class="fact-pic">
-                实际支付: <span>￥99</span></div>
+                实际支付: <span>￥${course.courseBase.price}</span></div>
             <div class="go-pay"><a href="#" @click.prevent="wxPay()">微信支付</a><a href="#" @click.prevent="aliPay()">支付宝支付</a><a href="#" @click.prevent="startLearngin()">试学</a></div>
         </div>
         <!--支付弹窗- end -->
         <div class="popup-comment-box">
-    
+
         </div>
     </div>
+
     <!-- 页面底部 -->
 <!--底部版权-->
 <!--#include virtual="/include/footer.html"-->
 <!--底部版权-->
 </div>
-<script>var courseId = "2";var courseCharge = "201001"</script>
+<script>var courseId = "${course.courseBase.id}";var courseCharge = "${course.courseBase.charge}"</script>
 <!--#include virtual="/include/course_detail_dynamic.html"-->
 </body>

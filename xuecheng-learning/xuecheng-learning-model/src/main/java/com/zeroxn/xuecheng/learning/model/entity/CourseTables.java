@@ -3,6 +3,9 @@ package com.zeroxn.xuecheng.learning.model.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -15,6 +18,8 @@ import java.time.LocalDateTime;
  * @since 2023-10-24
  */
 @TableName("xc_course_tables")
+@AllArgsConstructor
+@NoArgsConstructor
 public class CourseTables implements Serializable {
 
     private static final long serialVersionUID = 1L;

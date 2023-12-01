@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 /**
  * @description 我的课程表模型类
  * @author Mr.M

@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 /**
  * @Author: lisang
  * @DateTime: 2023-09-20 17:53:09
- * @Description:
+ * @Description: elasticsearch文档操作客户端
  */
 public class DocumentClient {
     private static final Logger logger = LoggerFactory.getLogger(DocumentClient.class);

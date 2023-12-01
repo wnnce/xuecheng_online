@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LearningController {
     @GetMapping("/open/learn/getvideo/{courseId}/{teachplanId}/{mediaId}")
     public String getVideo(@PathVariable("courseId") Long courseId, @PathVariable("teachplanId") Long teachplanId,
-                           @PathVariable("mediaId") Long mediaId) {
+                           @PathVariable("mediaId") String mediaId) {
         return null;
     }
 }

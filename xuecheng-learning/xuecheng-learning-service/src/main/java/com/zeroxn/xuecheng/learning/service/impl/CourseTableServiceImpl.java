@@ -1,12 +1,14 @@
 package com.zeroxn.xuecheng.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.exception.ParamException;
 import com.zeroxn.xuecheng.learning.client.ContentClient;
 import com.zeroxn.xuecheng.learning.mapper.ChooseCourseMapper;
 import com.zeroxn.xuecheng.learning.mapper.CourseTablesMapper;
 import com.zeroxn.xuecheng.learning.model.dto.ChooseCourseDto;
+import com.zeroxn.xuecheng.learning.model.dto.CourseTablesDto;
 import com.zeroxn.xuecheng.learning.model.entity.ChooseCourse;
 import com.zeroxn.xuecheng.learning.model.entity.CoursePublish;
 import com.zeroxn.xuecheng.learning.model.entity.CourseTables;
@@ -41,15 +43,43 @@ public class CourseTableServiceImpl implements CourseTableService {
         if (coursePublish == null) {
             throw new ParamException("课程不存在");
         }
+        ChooseCourse course;
+        ChooseCourseDto courseDto = new ChooseCourseDto();
         // 添加免费课程的逻辑
         if (coursePublish.getCharge().equals("201000")) {
-            ChooseCourse chooseCourse = addChooseCourse(userId, coursePublish, "700001", "701001");
-            CourseTables courseTables = addCourseTable(userId, chooseCourse);
+            course = addChooseCourse(userId, coursePublish, "700001", "701001");
+            CourseTables courseTables = addCourseTable(userId, course);
+            courseDto.setLearnStatus("702001");
         } else {
             // 添加收费课程的逻辑
-            ChooseCourse chooseCourse = addChooseCourse(userId, coursePublish, "700002", "701002");
+            course = addChooseCourse(userId, coursePublish, "700002", "701002");
+            courseDto.setLearnStatus("702002");
         }
-        return null;
+        BeanUtils.copyProperties(course, courseDto);
+        return courseDto;
+    }
+
+    @Override
+    public CourseTablesDto queryLearningStatus(String userId, Long courseId) {
+        // 查询我的课程表
+        LambdaQueryWrapper<CourseTables> tableWrapper = new LambdaQueryWrapper<CourseTables>()
+                .eq(CourseTables::getUserId, userId)
+                .eq(CourseTables::getCourseId, courseId);
+        CourseTables courseTables = tablesMapper.selectOne(tableWrapper);
+        CourseTablesDto tablesDto = new CourseTablesDto();
+
+        // 查询课表中当前课程为空的处理逻辑
+        if (courseTables == null) {
+            tablesDto.setLearnStatus("702002");
+            return tablesDto;
+        }
+        BeanUtils.copyProperties(courseTables, tablesDto);
+        if (LocalDateTime.now().isAfter(courseTables.getValidtimeEnd())) {
+            tablesDto.setLearnStatus("702003");
+        } else {
+            tablesDto.setLearnStatus("702001");
+        }
+        return tablesDto;
     }
 
     /**

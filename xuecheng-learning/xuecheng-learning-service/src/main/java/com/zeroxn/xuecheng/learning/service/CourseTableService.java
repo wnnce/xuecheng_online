@@ -1,6 +1,7 @@
 package com.zeroxn.xuecheng.learning.service;
 
 import com.zeroxn.xuecheng.learning.model.dto.ChooseCourseDto;
+import com.zeroxn.xuecheng.learning.model.dto.CourseTablesDto;
 
 /**
  * @Author: lisang
@@ -9,4 +10,5 @@ import com.zeroxn.xuecheng.learning.model.dto.ChooseCourseDto;
  */
 public interface CourseTableService {
     ChooseCourseDto addChooseCourse(String userId, Long courseId);
+    CourseTablesDto queryLearningStatus(String userId, Long courseId);
 }
