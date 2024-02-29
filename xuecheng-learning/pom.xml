@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.zeroxn.bbs</groupId>
+    <groupId>com.zeroxn.xuecheng.learning</groupId>
     <artifactId>xuecheng-learning</artifactId>
     <packaging>pom</packaging>
     <modules>

@@ -31,3 +31,6 @@ spring:
           - data-id: resource-server-${spring.profiles.active}.yaml
             group: xuecheng-online-common
             refresh: true
+          - data-id: redis-${spring.profiles.active}.yaml
+            group: xuecheng-online-common
+            refresh: true

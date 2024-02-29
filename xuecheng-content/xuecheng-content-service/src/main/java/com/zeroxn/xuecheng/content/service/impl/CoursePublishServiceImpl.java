@@ -26,6 +26,7 @@ import freemarker.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,12 +61,13 @@ public class CoursePublishServiceImpl implements CoursePublishService {
     private final ObjectMapper objectMapper;
     private final MediaClient mediaClient;
     private final SearchClient searchClient;
+    private final RedisTemplate<String, CoursePublish> redisTemplate;
     private final KafkaTemplate<String, Long> kafkaTemplate;
     public CoursePublishServiceImpl(CourseAsyncTask courseAsyncTask, CourseBaseService courseBaseService,
                                     TeachPlanService teachPlanService, CoursePublishMapper coursePublishMapper,
                                     ObjectMapper objectMapper, CoursePublishPreMapper coursePublishPreMapper,
                                     KafkaTemplate<String, Long> kafkaTemplate, CoursePreviewService previewService,
-                                    MediaClient mediaClient, SearchClient searchClient) throws IOException {
+                                    MediaClient mediaClient, SearchClient searchClient, RedisTemplate<String, CoursePublish> redisTemplate) throws IOException {
         this.courseAsyncTask = courseAsyncTask;
         this.courseBaseService = courseBaseService;
         this.teachPlanService = teachPlanService;
@@ -76,6 +78,7 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         this.previewService = previewService;
         this.mediaClient = mediaClient;
         this.searchClient = searchClient;
+        this.redisTemplate = redisTemplate;
         configuration = new Configuration(Configuration.VERSION_2_3_31);
         String classpath = this.getClass().getResource("/").getPath();
         configuration.setDirectoryForTemplateLoading(new File(classpath + "/templates"));
@@ -186,6 +189,11 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         return false;
     }
 
+    /**
+     * 保存课程索引到Elasticsearch
+     * @param courseId 发布课程id
+     * @return 返回是否成功
+     */
     @Override
     public boolean saveCourseIndex(Long courseId) {
         CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
@@ -194,8 +202,27 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         return searchClient.addIndex(courseIndex);
     }
 
+    /**
+     * 保存课程索引到redis
+     * @param courseId 发布课程Id
+     * @return 返回是否成功
+     */
+    @Override
+    public boolean saveCourseCache(Long courseId) {
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        if (coursePublish == null) {
+            return false;
+        }
+        redisTemplate.opsForValue().set("course-publish:" + courseId, coursePublish);
+        return true;
+    }
+
     @Override
     public CoursePublish queryCoursePublish(Long courseId) {
-        return coursePublishMapper.selectById(courseId);
+        CoursePublish coursePublish = redisTemplate.opsForValue().get("course-publish:" + courseId);
+        if (coursePublish == null) {
+            coursePublish = coursePublishMapper.selectById(courseId);
+        }
+        return coursePublish;
     }
 }

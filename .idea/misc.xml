@@ -11,10 +11,12 @@
       <set>
         <option value="$PROJECT_DIR$/xuecheng-auth/xuecheng-resource/pom.xml" />
         <option value="$PROJECT_DIR$/xuecheng-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/xuecheng-orders/xuecheng-order-api/pom.xml" />
         <option value="$PROJECT_DIR$/xuecheng-resource/pom.xml" />
         <option value="$PROJECT_DIR$/xuecheng_larning/pom.xml" />
       </set>
     </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

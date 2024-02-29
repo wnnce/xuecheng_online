@@ -15,5 +15,6 @@ public interface CoursePublishService {
     MultipartFile generateHtml(Long courseId);
     boolean uploadHtmlToMinio(Long courseId, MultipartFile htmlFile);
     boolean saveCourseIndex(Long courseId);
+    boolean saveCourseCache(Long courseId);
     CoursePublish queryCoursePublish(Long courseId);
 }

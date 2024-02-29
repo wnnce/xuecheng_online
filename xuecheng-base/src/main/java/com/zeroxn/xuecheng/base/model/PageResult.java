@@ -1,6 +1,7 @@
 package com.zeroxn.xuecheng.base.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PageResult<T> {
     /**
      * 返回的数据

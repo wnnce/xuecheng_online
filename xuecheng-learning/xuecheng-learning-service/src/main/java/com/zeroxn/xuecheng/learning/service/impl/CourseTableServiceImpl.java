@@ -2,12 +2,15 @@ package com.zeroxn.xuecheng.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zeroxn.xuecheng.base.exception.CustomException;
 import com.zeroxn.xuecheng.base.exception.ParamException;
+import com.zeroxn.xuecheng.base.model.PageResult;
 import com.zeroxn.xuecheng.learning.client.ContentClient;
 import com.zeroxn.xuecheng.learning.mapper.ChooseCourseMapper;
 import com.zeroxn.xuecheng.learning.mapper.CourseTablesMapper;
 import com.zeroxn.xuecheng.learning.model.dto.ChooseCourseDto;
+import com.zeroxn.xuecheng.learning.model.dto.CourseTableParam;
 import com.zeroxn.xuecheng.learning.model.dto.CourseTablesDto;
 import com.zeroxn.xuecheng.learning.model.entity.ChooseCourse;
 import com.zeroxn.xuecheng.learning.model.entity.CoursePublish;
@@ -80,6 +83,15 @@ public class CourseTableServiceImpl implements CourseTableService {
             tablesDto.setLearnStatus("702001");
         }
         return tablesDto;
+    }
+
+    @Override
+    public PageResult<CourseTables> pageCourseTable(CourseTableParam param) {
+        LambdaQueryWrapper<CourseTables> queryWrapper = new LambdaQueryWrapper<CourseTables>()
+                .eq(CourseTables::getUserId, param.getUserId());
+        Page<CourseTables> page = tablesMapper.selectPage(new Page<>(param.getPage(), param.getSize()), queryWrapper);
+
+        return new PageResult<>(page.getRecords(), page.getTotal(), page.getCurrent(), page.getSize());
     }
 
     /**

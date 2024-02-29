@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author: lisang
@@ -29,7 +30,7 @@ public class CoursePublishTaskServiceImpl extends ServiceImpl<CoursePublishTaskM
     }
 
     @Override
-    public void handlePublishTask(Long courseId) {
+    public void handlePublishTask(Long courseId, int task1Status, int task2Status, int task3Status) {
         CoursePublishTask task = publishTaskMapper.selectById(courseId);
         if (task == null) {
             logger.error("该课程发布任务不存在,课程ID:{}", courseId);
@@ -37,23 +38,26 @@ public class CoursePublishTaskServiceImpl extends ServiceImpl<CoursePublishTaskM
         }
         this.update(new LambdaUpdateWrapper<CoursePublishTask>().set(CoursePublishTask::getExecuteTime, LocalDateTime.now())
                 .set(CoursePublishTask::getExecuteCount, task.getExecuteCount() + 1)
+                .set(CoursePublishTask::getTask1Status, task1Status)
+                .set(CoursePublishTask::getTask2Status, task2Status)
+                .set(CoursePublishTask::getTask3Status, task3Status)
                 .eq(CoursePublishTask::getId, courseId));
     }
 
     @Override
-    public void updateTask1Status(Long courseId, Integer status) {
+    public void updateTask1Status(Long courseId, int status) {
         this.update(new LambdaUpdateWrapper<CoursePublishTask>().set(CoursePublishTask::getTask1Status, status)
                 .eq(CoursePublishTask::getId, courseId));
     }
 
     @Override
-    public void updateTask2Status(Long courseId, Integer status) {
+    public void updateTask2Status(Long courseId, int status) {
         this.update(new LambdaUpdateWrapper<CoursePublishTask>().set(CoursePublishTask::getTask2Status, status)
                 .eq(CoursePublishTask::getId, courseId));
     }
 
     @Override
-    public void updateTask3Status(Long courseId, Integer status) {
+    public void updateTask3Status(Long courseId, int status) {
         this.update(new LambdaUpdateWrapper<CoursePublishTask>().set(CoursePublishTask::getTask3Status, status)
                 .eq(CoursePublishTask::getId, courseId));
     }
@@ -62,4 +66,5 @@ public class CoursePublishTaskServiceImpl extends ServiceImpl<CoursePublishTaskM
     public void deletePublishTask(Long courseId) {
         publishTaskMapper.deleteById(courseId);
     }
+
 }

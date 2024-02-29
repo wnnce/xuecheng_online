@@ -2,29 +2,17 @@ package com.zeroxn.xuecheng.content.handler;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.zeroxn.xuecheng.content.client.MediaClient;
-import com.zeroxn.xuecheng.content.config.FileToMultipartFile;
-import com.zeroxn.xuecheng.content.model.DTO.CoursePreviewDTO;
 import com.zeroxn.xuecheng.content.model.pojo.CourseBase;
 import com.zeroxn.xuecheng.content.service.CourseBaseService;
-import com.zeroxn.xuecheng.content.service.CoursePreviewService;
 import com.zeroxn.xuecheng.content.service.CoursePublishService;
 import com.zeroxn.xuecheng.content.service.CoursePublishTaskService;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,7 +27,7 @@ public class CourseKafkaHandler {
     private final CourseBaseService baseService;
     private final CoursePublishService publishService;
     private final CoursePublishTaskService publishTaskService;
-    private final ExecutorService taskService = Executors.newFixedThreadPool(3);
+    private final ExecutorService taskServer = Executors.newFixedThreadPool(3);
     public CourseKafkaHandler(CourseBaseService baseService, CoursePublishService publishService,
                               CoursePublishTaskService publishTaskService) {
         this.baseService = baseService;
@@ -80,14 +68,17 @@ public class CourseKafkaHandler {
                 publishTaskService.updateTask1Status(courseId, 1);
             }
             return result;
-        }, taskService);
+        }, taskServer);
     }
     private CompletableFuture<Boolean> saveCourseCache(Long courseId){
         // TODO:将课程信息缓存到Redis 返回保存结果
         return CompletableFuture.supplyAsync(() -> {
-            publishTaskService.updateTask2Status(courseId, 1);
-            return true;
-        }, taskService);
+            boolean result = publishService.saveCourseCache(courseId);
+            if (result) {
+                publishTaskService.updateTask2Status(courseId, 1);
+            }
+            return result;
+        }, taskServer);
     }
     private CompletableFuture<Boolean> generateHtml(Long courseId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -100,6 +91,6 @@ public class CourseKafkaHandler {
                 publishTaskService.updateTask3Status(courseId, 1);
             }
             return result;
-        }, taskService);
+        }, taskServer);
     }
 }
