@@ -35,9 +35,10 @@
         <minio.version>8.5.2</minio.version>
         <elasticsearch-java.version>8.7.0</elasticsearch-java.version>
         <spring-doc.version>2.1.0</spring-doc.version>
-        <xxl-job-core.version>2.4.0</xxl-job-core.version>
         <spring-security-authorization-server.version>1.0.3</spring-security-authorization-server.version>
         <kaptcha.version>2.3.2</kaptcha.version>
+
+        <docker-registry.url>10.10.10.127:5000</docker-registry.url>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -114,4 +115,31 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.4.13</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <finalName>${project.name}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>

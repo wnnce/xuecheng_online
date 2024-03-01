@@ -1,5 +1,5 @@
 # 生成验证码
-POST {{gateway}}/checkcode/pic
+POST {{checkcode}}/checkcode/pic
 
 ###
 # 校验验证码
